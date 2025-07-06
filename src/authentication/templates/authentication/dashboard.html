@@ -1,0 +1,11 @@
+{% extends 'authentication/base.html' %}
+
+{% block content %}
+  <h2>Bienvenue sur le tableau de bord</h2>
+  <p>Bonjour {{ request.user.get_full_name }} !</p>
+  {% if request.user.role in "admin rh" %}
+    <a href="{% url 'create-user' %}">Créer un utilisateur</a>
+  {% endif %}
+  <br>
+  <a href="{% url 'logout' %}">Se déconnecter</a>
+{% endblock %}

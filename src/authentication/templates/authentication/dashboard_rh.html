@@ -1,0 +1,39 @@
+<h2>Dashboard RH</h2>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Rechercher un utilisateur..." value="{{ query }}">
+    <button type="submit">Rechercher</button>
+</form>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Rôle</th>
+            <th>Statut</th>
+            <th>Téléphone Pro</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.get_full_name }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.statut }}</td>
+                <td>{{ user.telephone_pro }}</td>
+                <td>
+                    <a href="{% url 'mon-profil' %}?id={{ user.id }}">Voir profil</a>
+                    <!-- Tu peux ajouter un bouton modifier statut ici -->
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5">Aucun utilisateur trouvé.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+<a href="{% url 'create-user' %}">➕ Créer un utilisateur</a> |
+<a href="{% url 'mon-profil' %}">👤 Mon profil</a> |
+<a href="{% url 'logout' %}">🚪 Déconnexion</a>

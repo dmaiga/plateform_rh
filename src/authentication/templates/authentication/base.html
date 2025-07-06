@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title>AntaresRH</title>
+    </head>
+    <body>
+        {% if user.is_authenticated %}
+  
+            <h3> Hello {{ request.user }}. </h3>
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'mon-profil' %}">👤 Mon profil</a>
+                <a href="{% url 'logout' %}">Se déconnecter</a>
+       
+           
+        {% endif %}
+        <h1>AntaresRH</h1>
+        {% block content %}
+        
+        {% endblock content %}
+    </body>
+</html>

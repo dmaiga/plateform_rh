@@ -39,3 +39,17 @@ class PersonalUserUpdateForm(forms.ModelForm):
             'poste_occupe',
         ]
  
+
+
+
+class RHUserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            'username', 'first_name', 'last_name', 'email',
+            'role', 'statut', 'start_date', 'end_date', 'telephone_pro'
+        ]
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }

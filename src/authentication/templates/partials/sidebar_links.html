@@ -1,0 +1,26 @@
+<h4 class="fw-bold mb-4">
+    <a class="text-decoration-none text-dark" href="{% url 'dashboard' %}">AntaresRH</a>
+</h4>
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link {% if request.path == '/documents/' %}active{% endif %}" href="{% url 'document-list' %}">📂 Documents</a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if request.path == '/notes/' %}active{% endif %}" href="{% url 'inbox' %}"> Notes</a>
+    </li>
+    {% if user.role in 'admin rh' %}
+    <li class="nav-item">
+        <a class="nav-link {% if request.path == '/dashboard-rh/' %}active{% endif %}" href="{% url 'dashboard-rh' %}">📊 Dashboard RH</a>
+    </li>
+    {% endif %}
+    <li class="nav-item">
+        <a class="nav-link {% if request.path == '/profil/' %}active{% endif %}" href="{% url 'mon-profil' %}">👤 Mon Profil</a>
+    </li>
+    <li class="nav-item mt-4">
+        <a class="nav-link text-danger" href="{% url 'logout' %}">🚪 Déconnexion</a>
+    </li>
+</ul>
+<div class="mt-5 small text-muted">
+    Connecté :<br>
+    <strong>{{ user.get_full_name|upper  }} ({{ user.role }})</strong>
+</div>

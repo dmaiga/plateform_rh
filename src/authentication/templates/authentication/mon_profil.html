@@ -2,37 +2,201 @@
 {% block content %}
 
 <div class="container mt-4">
-    <h2 class="mb-4">Mon Profil</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Mon Profil</h2>
 
-    <div class="row">
-        <div class="col-md-4 text-center">
-            {% if request.user.photo %}
-                <img src="{{ request.user.photo.url }}" alt="Photo de profil" class="rounded-circle shadow mb-3" width="150" height="150">
-            {% else %}
-                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width:150px; height:150px;">
-                    <span class="text-white">Aucune photo</span>
-                </div>
-            {% endif %}
-        </div>
+    </div>
 
-        <div class="col-md-8">
-            <form method="post" enctype="multipart/form-data" class="row g-3">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="col-md-6">
-                        <label class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="text-danger">{{ field.errors }}</div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <!-- Colonne photo de profil - Version améliorée -->
+                <div class="col-md-4 text-center">
+                    <div class="position-relative mb-4" style="width: 180px; margin: 0 auto;">
+                        {% if request.user.photo %}
+                            <img src="{{ request.user.photo.url }}" alt="Photo de profil" 
+                                 class="profile-photo rounded-circle shadow" width="180" height="180"
+                                 style="object-fit: cover;">
+                        {% else %}
+                            <div class="profile-photo bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                                 style="width:180px; height:180px;">
+                                <i class="bi bi-person-circle text-secondary" style="font-size: 4rem;"></i>
+                            </div>
                         {% endif %}
+
+                        <!-- Bouton d'upload stylisé avec tooltip -->
+                        <label for="photo-upload" class="btn-upload position-absolute bottom-0 end-0 rounded-circle" 
+                               data-bs-toggle="tooltip" data-bs-placement="top" title="Changer la photo">
+                            <i class="bi bi-camera-fill"></i>
+                        </label>
+                        <input type="file" id="photo-upload" name="photo" accept="image/*" class="d-none" 
+                               onchange="previewImage(this); this.form.submit()">
                     </div>
-                {% endfor %}
-                <div class="col-12">
-                    <button type="submit" class="btn btn-success mt-2">Mettre à jour</button>
+
+                    <div class="text-center">
+                        <h4 class="mb-1">{{ request.user.get_full_name }}</h4>
+                        <span class="badge bg-info text-dark">{{ request.user.role|upper }}</span>
+                        
+                        <div class="mt-3 small text-muted">
+                            <div><i class="bi bi-envelope me-2"></i> {{ request.user.email }}</div>
+                            {% if request.user.telephone %}
+                                <div class="mt-1"><i class="bi bi-telephone me-2"></i> {{ request.user.telephone }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-            </form>
+
+                <!-- Colonne formulaire -->
+                <div class="col-md-8">
+                    <form method="post" enctype="multipart/form-data" class="row g-3">
+                        {% csrf_token %}
+                        
+                        {% for field in form %}
+                            {% if field.name != 'photo' %}
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ field.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <div class="col-12 mt-4">
+                            <div class="d-flex justify-content-between">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-check-circle me-2"></i> Enregistrer
+                                </button>
+                                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                                    Annuler
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section informations complémentaires -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i> Informations complémentaires</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Date de création</label>
+                        <p class="form-control-plaintext">{{ request.user.date_joined|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Dernière connexion</label>
+                        <p class="form-control-plaintext">
+                            {% if request.user.last_login %}
+                                {{ request.user.last_login|date:"d/m/Y H:i" }}
+                            {% else %}
+                                Jamais connecté
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Styles pour la photo de profil */
+    .profile-photo {
+        border: 3px solid #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .profile-photo:hover {
+        transform: scale(1.03);
+    }
+    
+    .btn-upload {
+        background-color: #fff;
+        border: 2px solid #dee2e6;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-upload:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.1);
+        border-color: #adb5bd;
+    }
+    
+    .btn-upload i {
+        font-size: 1.2rem;
+        color: #495057;
+    }
+    
+    /* Styles généraux */
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.35em 0.65em;
+    }
+</style>
+
+<script>
+    // Affiche un aperçu de la photo avant upload
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var profilePhoto = document.querySelector('.profile-photo');
+                if (profilePhoto.tagName === 'IMG') {
+                    profilePhoto.src = e.target.result;
+                } else {
+                    // Si c'est la div avec l'icône, on la remplace par une image
+                    var newImg = document.createElement('img');
+                    newImg.src = e.target.result;
+                    newImg.className = 'profile-photo rounded-circle shadow';
+                    newImg.style.width = '180px';
+                    newImg.style.height = '180px';
+                    newImg.style.objectFit = 'cover';
+                    profilePhoto.parentNode.replaceChild(newImg, profilePhoto);
+                }
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    // Active les tooltips Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
 
 {% endblock %}

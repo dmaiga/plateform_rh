@@ -18,6 +18,7 @@ class User(AbstractUser):
     # Champs RH
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     statut = models.CharField(max_length=10, choices=STATUT_CHOICES, default='actif')
     telephone_pro = models.CharField(max_length=20, blank=True)
     poste_occupe = models.CharField(max_length=100, blank=True)  

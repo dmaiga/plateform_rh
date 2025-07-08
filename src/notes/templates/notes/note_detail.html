@@ -1,0 +1,51 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+<div class="card shadow">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h4>{{ note.sujet }}</h4>
+    <span class="badge 
+      {% if note.niveau_urgence == 'critical' %}bg-danger
+      {% elif note.niveau_urgence == 'high' %}bg-warning text-dark
+      {% elif note.niveau_urgence == 'medium' %}bg-info text-dark
+      {% else %}bg-secondary
+      {% endif %}">
+      {{ note.get_niveau_urgence_display }}
+    </span>
+  </div>
+
+  <div class="card-body">
+    <p class="text-muted">
+      ✉️ <strong>Expéditeur :</strong> {{ note.expediteur.get_full_name }} <br>
+      🗓️ <strong>Date :</strong> {{ note.date_creation|date:"d/m/Y H:i" }}
+      {% if note.date_limite %}
+        <br>⏳ <strong>Date limite :</strong> {{ note.date_limite|date:"d/m/Y H:i" }}
+      {% endif %}
+    </p>
+
+    <hr>
+
+    <p>{{ note.contenu|linebreaks }}</p>
+
+    {% if note.pieces_jointes %}
+      <hr>
+      <p>
+        📎 <strong>Pièce jointe :</strong><br>
+        <a href="{{ note.pieces_jointes.url }}" class="btn btn-outline-secondary" target="_blank">Voir</a>
+        <a href="{{ note.pieces_jointes.url }}" class="btn btn-outline-success" download>Télécharger</a>
+      </p>
+    {% endif %}
+  </div>
+
+  <div class="card-footer">
+   <form method="post" action="{% url 'archiver-note' note.id %}" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Archiver cette note ?')">
+    🗃️ Archiver
+  </button>
+</form>
+<a href="{% url 'inbox' %}" class="btn btn-outline-primary"> Boîte de réception</a>
+
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Dashboard</a>
+  </div>
+</div>
+{% endblock %}

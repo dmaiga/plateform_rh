@@ -1,0 +1,37 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📬 Boîte de réception</h2>
+</div>
+
+<div class="list-group">
+  {% for reception in notes_receptions %}
+    {% with note=reception.note %}
+    <a href="{% url 'note-detail' note.id %}" class="list-group-item list-group-item-action {% if not reception.est_lue %}fw-bold{% endif %}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <span class="badge me-2 
+            {% if note.niveau_urgence == 'critical' %}bg-danger
+            {% elif note.niveau_urgence == 'high' %}bg-warning text-dark
+            {% elif note.niveau_urgence == 'medium' %}bg-info text-dark
+            {% else %}bg-secondary
+            {% endif %}">
+            {{ note.get_niveau_urgence_display }}
+          </span>
+          {{ note.sujet }}
+          <br>
+          <small class="text-muted">
+            ✉️ De : {{ note.expediteur.get_full_name }} — 📅 {{ note.date_creation|date:"d/m/Y H:i" }}
+          </small>
+        </div>
+        {% if not reception.est_lue %}
+          <span class="badge bg-primary">Non lue</span>
+        {% endif %}
+      </div>
+    </a>
+    {% endwith %}
+  {% empty %}
+    <p>Aucune note reçue.</p>
+  {% endfor %}
+</div>
+{% endblock %}

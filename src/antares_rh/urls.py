@@ -21,16 +21,15 @@ from django.conf.urls.static import static
 
 import authentication.views
 import documents.views
+import notes.views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', authentication.views.login_page, name='login'),
-    path('logout', authentication.views.logout_user, name='logout'), 
-    path('create_user', authentication.views.create_user_view, name='create-user'),   
-    path('dashboard/', authentication.views.dashboard, name='dashboard'),
-    path('mon_profil/', authentication.views.mon_profil, name='mon-profil'),
-    path('dashboard_rh/', authentication.views.dashboard_rh, name='dashboard-rh'),
+    path('auth/', include('authentication.urls')),
     path('documents/', include('documents.urls')),
+    path('logs/', include('logs.urls')),
+    path('notes/', include('notes.urls')),
 
-  
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

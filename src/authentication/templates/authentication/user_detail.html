@@ -1,0 +1,58 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Détail de l'utilisateur</h2>
+
+<div class="card p-4 shadow">
+    <div class="row">
+        <!-- Photo -->
+        <div class="col-md-3 text-center">
+            {% if user_cible.photo %}
+                <img src="{{ user_cible.photo.url }}" class="img-thumbnail mb-3" alt="Photo de profil" width="150">
+            {% else %}
+                <img src="{% static 'default-avatar.png' %}" class="img-thumbnail mb-3" alt="Avatar par défaut" width="150">
+            {% endif %}
+            <h5>{{ user_cible.get_full_name }}</h5>
+            <p class="text-muted">{{ user_cible.username }}</p>
+        </div>
+
+        <!-- Informations -->
+        <div class="col-md-9">
+            <h5>Informations professionnelles</h5>
+            <ul class="list-group mb-3">
+                <li class="list-group-item"><strong>Rôle :</strong> {{ user_cible.get_role_display }}</li>
+                <li class="list-group-item"><strong>Poste occupé :</strong> {{ user_cible.poste_occupe }}</li>
+                <li class="list-group-item"><strong>Statut :</strong> {{ user_cible.get_statut_display }}</li>
+                <li class="list-group-item"><strong>Début de contrat :</strong> {{ user_cible.start_date|date:"d/m/Y" }}</li>
+                <li class="list-group-item"><strong>Date d'inscription :</strong> {{ user_cible.date_joined|date:"d/m/Y" }}</li>
+                <li class="list-group-item"><strong>Dernière connexion :</strong> {{ user_cible.last_login|date:"d/m/Y H:i" }}</li>
+            </ul>
+
+            <h5>Contacts</h5>
+            <ul class="list-group mb-3">
+                <li class="list-group-item"><strong>Email :</strong> {{ user_cible.email }}</li>
+                <li class="list-group-item"><strong>Téléphone pro :</strong> {{ user_cible.telephone_pro }}</li>
+                <li class="list-group-item"><strong>Téléphone personnel :</strong> {{ user_cible.telephone_perso }}</li>
+                <li class="list-group-item"><strong>Contact d'urgence :</strong> {{ user_cible.contact_urgence }}</li>
+            </ul>
+
+            <h5>Adresse</h5>
+            <ul class="list-group mb-3">
+                <li class="list-group-item"><strong>Ville :</strong> {{ user_cible.ville }}</li>
+                <li class="list-group-item"><strong>Quartier :</strong> {{ user_cible.quartier }}</li>
+                <li class="list-group-item"><strong>Rue :</strong> {{ user_cible.rue }}</li>
+                <li class="list-group-item"><strong>Porte :</strong> {{ user_cible.porte }}</li>
+            </ul>
+
+            <h5>Informations personnelles</h5>
+            <ul class="list-group mb-3">
+                <li class="list-group-item"><strong>Date de naissance :</strong> {{ user_cible.date_naissance|date:"d/m/Y" }}</li>
+            </ul>
+
+            <a href="{% url 'dashboard-rh' %}" class="btn btn-secondary mt-3">← Retour au tableau</a>
+            <a class="btn btn-secondary mt-3" href="{% url 'edit-user-rh' user.id %}">✏️ Modifier</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

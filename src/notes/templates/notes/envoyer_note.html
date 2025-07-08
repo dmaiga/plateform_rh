@@ -1,0 +1,20 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+{% block content %}
+<h2>✉️ Envoyer une note interne</h2>
+<script>
+document.querySelector("form").addEventListener("submit", function (e) {
+    const btn = this.querySelector("button[type='submit']");
+    btn.disabled = true;
+    btn.innerHTML = "Envoi en cours...";
+});
+</script>
+
+<form method="post" enctype="multipart/form-data" class="mt-4">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit" class="btn btn-primary">📤 Envoyer la note</button>
+</form>
+
+{% endblock %}

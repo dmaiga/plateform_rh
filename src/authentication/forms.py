@@ -16,8 +16,8 @@ class CreateUserForm(forms.ModelForm):
                     'email', 
                     'role', 
                     'start_date', 
-                    'statut', 
-                    'telephone_pro'
+                    'telephone_pro',
+                 
                 ]
 
 
@@ -25,10 +25,17 @@ class PersonalUserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
+            'first_name',
+            'last_name', 
+            'email', 
             'photo',
             'telephone_perso',
-            'adresse',
+            'ville',
+            'quartier',
+            'porte',
+            'rue',
             'date_naissance',
             'contact_urgence',
-            'formation',
+            'poste_occupe',
         ]
+ 

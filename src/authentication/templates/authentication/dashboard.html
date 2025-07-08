@@ -5,6 +5,7 @@
   <p>Bonjour {{ request.user.get_full_name }} !</p>
   {% if request.user.role in "admin rh" %}
     <a href="{% url 'create-user' %}">Créer un utilisateur</a>
+    <a href="{% url 'dashboard-rh' %}">Lister les utilisateurs</a>    
   {% endif %}
   <br>
   <a href="{% url 'logout' %}">Se déconnecter</a>

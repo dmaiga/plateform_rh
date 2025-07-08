@@ -1,0 +1,36 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+
+<h2>📁 Documents disponibles</h2>
+
+<ul>
+  {% for doc in documents %}
+    <li style="margin-bottom: 1.5em;">
+      <strong>{{ doc.titre }}</strong> ({{ doc.get_type_display }})<br>
+      <em>{{ doc.description|truncatewords:20 }}</em><br>
+      <small>
+        📅 Ajouté le {{ doc.date_ajout|date:"d/m/Y" }} |
+        👤 Auteur : {{ doc.auteur.get_full_name }} |
+        🔐 Visibilité : {{ doc.get_visibilite_display }}
+      </small><br>
+
+      <!-- Liens -->
+      {% if doc.fichier %}
+        📎 
+        <a href="{{ doc.fichier.url }}" target="_blank">Voir dans le navigateur</a> |
+        ⬇️ 
+        <a href="{{ doc.fichier.url }}" download>Télécharger</a> |
+        🔍 
+        <a href="{% url 'document-detail' doc.pk %}">Détails</a>
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>Aucun document disponible</li>
+  {% endfor %}
+</ul>
+
+<div style="margin-top: 2em;">
+  <a href="{% url 'upload-document' %}" class="btn btn-primary">Uploader un document</a>
+</div>
+
+{% endblock %}

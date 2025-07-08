@@ -1,10 +1,38 @@
 {% extends 'authentication/base.html' %}
-
 {% block content %}
-<h2>Mon Profil</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Mettre à jour</button>
-</form>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Mon Profil</h2>
+
+    <div class="row">
+        <div class="col-md-4 text-center">
+            {% if request.user.photo %}
+                <img src="{{ request.user.photo.url }}" alt="Photo de profil" class="rounded-circle shadow mb-3" width="150" height="150">
+            {% else %}
+                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width:150px; height:150px;">
+                    <span class="text-white">Aucune photo</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-8">
+            <form method="post" enctype="multipart/form-data" class="row g-3">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="col-md-6">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success mt-2">Mettre à jour</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'authentication/base.html' %}
+
+{% block content %}
+<h2>{{ document.titre }}</h2>
+<p><strong>Description :</strong> {{ document.description }}</p>
+<p><strong>Type :</strong> {{ document.get_type_display }}</p>
+<p><strong>Auteur :</strong> {{ document.auteur.get_full_name }}</p>
+<p><strong>Date ajout :</strong> {{ document.date_ajout }}</p>
+
+{% if document.fichier %}
+    <p><a href="{{ document.fichier.url }}" target="_blank">📎 Télécharger le document</a></p>
+{% endif %}
+<p><a href="{% url 'document-list' %}">⬅️ Retour à la liste des documents</a></p>
+
+
+{% endblock %}

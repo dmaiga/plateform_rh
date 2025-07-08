@@ -83,7 +83,10 @@ def login_page(request):
             )
             if user is not None:
                 login(request, user)
-                return redirect ('dashboard')
+                if user.role in ['admin', 'rh']:
+                    return redirect('dashboard')
+                else:
+                    return redirect('dashboard')
             else:
                 message = 'Identifiants invalides.'
     return render(

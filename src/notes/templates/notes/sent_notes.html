@@ -1,0 +1,26 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+<h2>📤 Notes envoyées</h2>
+
+{% if notes_envoyees %}
+  <div class="list-group">
+    {% for note in notes_envoyees %}
+      <a href="{% url 'note-envoyee-detail' note.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ note.sujet }}</h5>
+          <small>{{ note.date_creation|date:"d/m/Y H:i" }}</small>
+        </div>
+        <p class="mb-1">{{ note.contenu|truncatewords:15 }}</p>
+        <small>
+          Niveau d'urgence : <strong class="text-{{ note.urgence_css }}">{{ note.get_niveau_urgence_display }}</strong> |
+          Destinataires : {{ note.destinataires.count }}
+        </small>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>Vous n'avez envoyé aucune note pour le moment.</p>
+{% endif %}
+
+<a href="{% url 'inbox' %}" class="btn btn-secondary mt-3">📥 Retour à la boîte de réception</a>
+{% endblock %}

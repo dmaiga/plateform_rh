@@ -1,8 +1,21 @@
 {% extends 'authentication/base.html' %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>📬 Boîte de réception</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+  <div>
+    <h2 class="mb-0">📬 <strong>Boîte de réception</strong></h2>
+    <small class="text-muted">Vos notes internes reçues</small>
+  </div>
+  <div class="btn-group">
+    <a href="{% url 'send-note' %}" class="btn btn-sm btn-success">
+      ✍️ Rédiger une note
+    </a>
+    <a href="{% url 'sent-note' %}" class="btn btn-sm btn-outline-secondary">
+      📤 Notes envoyées
+    </a>
+  </div>
 </div>
+
 
 <div class="list-group">
   {% for reception in notes_receptions %}

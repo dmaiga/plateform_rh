@@ -1,7 +1,18 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from .models import NoteInterne
 
+User = get_user_model()
+
 class NoteForm(forms.ModelForm):
+    destinataires = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-select select2',
+            'data-placeholder': 'Choisissez les destinataires',
+        })
+    )
+
     class Meta:
         model = NoteInterne
         fields = [
@@ -14,11 +25,6 @@ class NoteForm(forms.ModelForm):
         ]
 
         widgets = {
-            'destinataires': forms.SelectMultiple(attrs={
-                'class': 'form-select select2',
-                'style': 'width:100%;',
-                'placeholder': 'Choisir un ou plusieurs destinataires',
-            }),
             'sujet': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Sujet de la note...'

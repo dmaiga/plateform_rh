@@ -1,20 +1,67 @@
 {% extends 'authentication/base.html' %}
 {% load static %}
 {% block content %}
-<h2>✉️ Envoyer une note interne</h2>
+
+<!-- Include Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
-document.querySelector("form").addEventListener("submit", function (e) {
-    const btn = this.querySelector("button[type='submit']");
-    btn.disabled = true;
-    btn.innerHTML = "Envoi en cours...";
-});
+  $(document).ready(function() {
+    $('.select2').select2({
+      width: '100%',
+      placeholder: $(this).data('placeholder'),
+      allowClear: true
+    });
+  });
 </script>
+<div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+  <div>
+    <h2 class="mb-0">✉️ <strong>Nouvelle note interne</strong></h2>
+    <small class="text-muted">Rédigez et envoyez une note à un ou plusieurs destinataires</small>
+  </div>
+  <a href="{% url 'inbox' %}" class="btn btn-outline-success btn-sm">📥 Revenir à la boîte de réception</a>
+</div>
 
-<form method="post" enctype="multipart/form-data" class="mt-4">
+<form method="post" enctype="multipart/form-data" class="card shadow-sm p-4">
   {% csrf_token %}
-  {{ form.as_p }}
 
-  <button type="submit" class="btn btn-primary">📤 Envoyer la note</button>
+  <div class="mb-3">
+    <label for="id_destinataires" class="form-label">👥 Destinataires</label>
+    {{ form.destinataires }}
+    <small class="text-muted">Sélectionnez un ou plusieurs utilisateurs</small>
+  </div>
+
+  <div class="mb-3">
+    <label for="id_sujet" class="form-label">📝 Sujet</label>
+    {{ form.sujet }}
+  </div>
+
+  <div class="mb-3">
+    <label for="id_contenu" class="form-label">📄 Contenu</label>
+    {{ form.contenu }}
+  </div>
+
+  <div class="mb-3">
+    <label for="id_niveau_urgence" class="form-label">⚠️ Niveau d’urgence</label>
+    {{ form.niveau_urgence }}
+  </div>
+
+  <div class="mb-3">
+    <label for="id_date_limite" class="form-label">📅 Date limite (optionnelle)</label>
+    {{ form.date_limite  }}
+  </div>
+
+  <div class="mb-3">
+    <label for="id_pieces_jointes" class="form-label">📎 Pièce jointe</label>
+    {{ form.pieces_jointes  }}
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">📤 Envoyer la note</button>
 </form>
+
+
 
 {% endblock %}

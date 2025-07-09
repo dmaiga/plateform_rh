@@ -1,0 +1,32 @@
+{% extends "authentication/base.html" %}
+
+{% block content %}
+<h2>📤 Détail de la note envoyée</h2>
+
+<p><strong>Sujet :</strong> {{ note.sujet }}</p>
+<p><strong>Contenu :</strong> {{ note.contenu }}</p>
+<p><strong>Date :</strong> {{ note.date_creation }}</p>
+<p><strong>Niveau d'urgence :</strong> {{ note.badge_urgence }}</p>
+{% if note.pieces_jointes %}
+<p><strong>Pièce jointe :</strong> <a href="{{ note.pieces_jointes.url }}" download>Télécharger</a></p>
+{% endif %}
+
+<h3>📨 Statut de lecture des destinataires :</h3>
+<ul>
+  {% for reception in receptions %}
+    <li>
+    {{ reception.destinataire.get_full_name|default:reception.destinataire.username }} :
+        {% if reception.est_lue %}
+            ✅ Lu le {{ reception.date_lecture|date:"d/m/Y H:i" }}
+         {% else %}
+             ❌ Non lu
+        {% endif %}
+
+    </li>
+  {% empty %}
+    <li>Aucun destinataire.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'sent-note' %}" class="btn btn-secondary">⬅ Retour aux notes envoyées</a>
+{% endblock %}

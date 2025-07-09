@@ -3,9 +3,35 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.http import Http404
+from django.utils import timezone
 from .forms import NoteForm
 from .models import NoteInterne, NoteReception
 from logs.utils import enregistrer_action  
+
+def get_unread_notes_count(user):
+    return NoteReception.objects.filter(destinataire=user, est_lue=False).count()
+
+
+@login_required
+def note_envoyee_detail(request, note_id):
+    note = get_object_or_404(NoteInterne, id=note_id, expediteur=request.user)
+    receptions = note.receptions.select_related('destinataire')
+
+    return render(request, 'notes/note_envoyee_detail.html', {
+        'note': note,
+        'receptions': receptions
+    })
+
+@login_required
+def sent_notes(request):
+    notes_envoyees = NoteInterne.objects.filter(expediteur=request.user) \
+        .prefetch_related('destinataires') \
+        .order_by('-date_creation')
+
+    return render(request, 'notes/sent_notes.html', {
+        'notes_envoyees': notes_envoyees
+    })
+
 
 @login_required
 def send_note(request):
@@ -43,26 +69,24 @@ def inbox(request):
         'notes_receptions': notes_receptions
     })
 
-
 @login_required
 def note_detail(request, note_id):
-    try:
-        reception = NoteReception.objects.select_related('note', 'note__expediteur') \
-            .get(note__id=note_id, destinataire=request.user)
-    except NoteReception.DoesNotExist:
-        raise Http404("Note introuvable ou accès non autorisé.")
+    reception = get_object_or_404(
+        NoteReception.objects.select_related('note', 'note__expediteur'),
+        note__id=note_id,
+        destinataire=request.user
+    )
 
-    # Marquer comme lue si non lue
     if not reception.est_lue:
         reception.est_lue = True
+        reception.date_lecture = timezone.now()
         reception.save()
 
-    note = reception.note
-
     return render(request, 'notes/note_detail.html', {
-        'note': note,
+        'note': reception.note,
         'reception': reception
     })
+
 
 @login_required
 @require_POST

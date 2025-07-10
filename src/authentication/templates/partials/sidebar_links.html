@@ -1,3 +1,4 @@
+
 <h4 class="fw-bold mb-4">
     <a class="text-decoration-none text-dark" href="{% url 'dashboard' %}">AntaresRH</a>
 </h4>
@@ -12,9 +13,13 @@
             ✉️ Notes
         </a>
         {% if notes_non_lues > 0 %}
-            <span class="badge bg-danger text-white ms-auto me-2" style="font-size: 0.8rem;">
-                🔔 {{ notes_non_lues }}
-            </span>
+            <a href="{% url 'inbox' %}">
+              🔔 <span id="noteCounter" class="badge bg-danger {% if notes_non_lues == 0 %}d-none{% endif %}">
+                {{ notes_non_lues }}
+              </span>
+            </a>
+
+            
         {% endif %}
     </li>
     {% if user.role in 'admin rh' %}
@@ -24,6 +29,7 @@
         </a>
     </li>
     {% endif %}
+    
     <li class="nav-item">
         <a class="nav-link {% if request.path == '/profil/' %}active{% endif %}" href="{% url 'mon-profil' %}">
             👤 Mon Profil
@@ -34,6 +40,7 @@
             🚪 Déconnexion
         </a>
     </li>
+    
 </ul>
 
 <div class="mt-5 small text-muted">

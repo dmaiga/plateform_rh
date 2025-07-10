@@ -1,12 +1,19 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+      {% load static %}
+  
     <meta charset="UTF-8">
     <title>AntaresRH</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+     <script src="https://unpkg.com/htmx.org@1.8.5" integrity="sha384-7aHh9lqPYGYZ7sTHvzP1t3BAfLhYSTy9ArHdP3Xsr9/3TlGurYgcPBoFmXX2TX/w" crossorigin="anonymous"></script>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+    
+    <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+       <style>
         body {
             background-color: #f9f9f9;
         }
@@ -30,7 +37,11 @@
         }
     </style>
 </head>
-<body>
+
+
+
+
+<body hx-ext="ws" ws-connect="/ws/notifications/">
     {% if user.is_authenticated %}
     
     <!-- Toggle button for mobile -->
@@ -41,6 +52,7 @@
         <span class="navbar-text">
             {{ user.get_full_name|upper  }} ({{ user.role}})
         </span>
+        
     </nav>
 
     <!-- Sidebar mobile (offcanvas) -->
@@ -85,5 +97,52 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Toast de notification  -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="toastNotification" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        <strong>Nouvelle note :</strong> <span id="noteMessage"></span>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const socket = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
+
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+
+    if (data.type === 'note') {
+        // Lecture du son
+        try {
+            const audio = new Audio("{% static 'audio/notification.mp3' %}");
+            audio.play().catch(err => {
+                console.warn('Lecture audio bloquée par le navigateur :', err);
+            });
+        } catch (e) {
+            console.error('Erreur audio :', e);
+        }
+
+
+        // Affichage du toast
+        document.getElementById('noteMessage').textContent = data.message;
+        const toast = new bootstrap.Toast(document.getElementById('toastNotification'));
+        toast.show();
+
+        // Mise à jour de la cloche
+        fetch("{% url 'compteur_notes_non_lues' %}")
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('noteCounter');
+                badge.textContent = data.count;
+                badge.classList.toggle('d-none', data.count === 0);
+            });
+    }
+};
+</script>
+
 </body>
 </html>

@@ -8,6 +8,10 @@ from .forms import NoteForm
 from .models import NoteInterne, NoteReception
 from logs.utils import enregistrer_action  
 
+from django.http import JsonResponse
+
+
+
 def get_unread_notes_count(user):
     return NoteReception.objects.filter(destinataire=user, est_lue=False).count()
 
@@ -100,3 +104,10 @@ def archiver_note(request, note_id):
         messages.error(request, "❌ Impossible d’archiver cette note.")
 
     return redirect('inbox')
+
+
+
+@login_required
+def compteur_notes_non_lues(request):
+    count = NoteReception.objects.filter(destinataire=request.user, lue=False, est_archivee=False).count()
+    return JsonResponse({'count': count})

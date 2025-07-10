@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 import authentication.views
 import documents.views
 import notes.views
+import todo.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +31,8 @@ urlpatterns = [
     path('documents/', include('documents.urls')),
     path('logs/', include('logs.urls')),
     path('notes/', include('notes.urls')),
-
+    path('todo/', include('todo.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

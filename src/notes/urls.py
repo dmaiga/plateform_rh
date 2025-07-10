@@ -9,5 +9,5 @@ urlpatterns = [
     path('note/<int:note_id>/', views.note_detail, name='note-detail'),
     path('note/<int:note_id>/archiver/', views.archiver_note, name='archiver-note'),
     path('note_envoyee/<int:note_id>/', views.note_envoyee_detail, name='note-envoyee-detail'),
-
+    path('compteur_notes_non_lues/', views.compteur_notes_non_lues, name='compteur_notes_non_lues'),
 ]

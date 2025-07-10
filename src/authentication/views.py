@@ -12,7 +12,8 @@ from .forms import CreateUserForm, PersonalUserUpdateForm, RHUserUpdateForm
 from .models import User
 from logs.utils import enregistrer_action
 
-
+from todo.models import FichePoste, Tache  # importe les modèles du module todo
+from datetime import date
 
 def is_rh_or_admin(user):
     return user.is_authenticated and user.role in ['admin', 'rh']
@@ -58,9 +59,33 @@ def mon_profil(request):
     
     return render(request, 'authentication/mon_profil.html', {'form': form})
 
+
+
 @login_required
 def dashboard(request):
-    return render(request, 'authentication/dashboard.html')
+    if request.user.role in ["rh", "admin"]:
+        return redirect('dashboard-rh')
+
+    employe = request.user
+
+    fiches = FichePoste.objects.filter(employe=employe)
+    toutes_taches = Tache.objects.filter(fiche_poste__in=fiches).order_by(
+        '-prevue_aujourdhui', 'est_terminee', 'priorite'
+    )
+
+    taches_aujourdhui = toutes_taches.filter(prevue_aujourdhui=True)
+    taches_terminees = toutes_taches.filter(est_terminee=True)
+    taches_en_cours = toutes_taches.filter(heure_debut__isnull=False, heure_fin__isnull=True)
+    taches_a_faire = toutes_taches.filter(est_terminee=False, heure_debut__isnull=True)
+   
+
+    return render(request, 'authentication/dashboard.html', {
+        'toutes_taches': toutes_taches,
+        'taches_aujourdhui': taches_aujourdhui,
+        'taches_en_cours': taches_en_cours,
+        'taches_terminees': taches_terminees,
+        'taches_a_faire': taches_a_faire,
+    })
 
 
 
@@ -102,7 +127,7 @@ def login_page(request):
             if user is not None:
                 login(request, user)
                 if user.role in ['admin', 'rh']:
-                    return redirect('dashboard')
+                    return redirect('dashboard-rh')
                 else:
                     return redirect('dashboard')
             else:

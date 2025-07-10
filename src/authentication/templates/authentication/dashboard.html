@@ -1,12 +1,56 @@
 {% extends 'authentication/base.html' %}
-
 {% block content %}
-  <h2>Bienvenue sur le tableau de bord</h2>
+<div class="container">
+  <h2 class="mb-4">🎯 Mon Dashboard</h2>
   <p>Bonjour {{ request.user.get_full_name }} !</p>
-  {% if request.user.role in "admin rh" %}
-    <a href="{% url 'create-user' %}">Créer un utilisateur</a>
-    <a href="{% url 'dashboard-rh' %}">Lister les utilisateurs</a>    
-  {% endif %}
+
+  <h4>📌 Tâches prévues pour aujourd’hui</h4>
+  <ul class="list-group mb-4">
+    {% for tache in taches_aujourdhui %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ tache.titre }}
+        {% if tache.est_terminee %}
+          ✅
+        {% elif tache.heure_debut and not tache.heure_fin %}
+          ⏱️ En cours
+        {% else %}
+          ⏳ À faire
+        {% endif %}
+      </li>
+    {% empty %}
+      <li class="list-group-item">Aucune tâche prévue pour aujourd’hui</li>
+    {% endfor %}
+  </ul>
+
+  <h4>🕒 Tâches en cours</h4>
+  <ul class="list-group mb-4">
+    {% for tache in taches_en_cours %}
+      <li class="list-group-item">{{ tache.titre }} — démarrée à {{ tache.heure_debut|date:"H:i" }}</li>
+    {% empty %}
+      <li class="list-group-item">Aucune tâche en cours</li>
+    {% endfor %}
+  </ul>
+
+  <h4>📂 Tâches à faire</h4>
+  <ul class="list-group mb-4">
+    {% for tache in taches_a_faire %}
+      <li class="list-group-item">{{ tache.titre }}</li>
+    {% empty %}
+      <li class="list-group-item">Toutes les tâches sont en cours ou terminées</li>
+    {% endfor %}
+  </ul>
+
+  <h4>✅ Tâches terminées</h4>
+  <ul class="list-group">
+    {% for tache in taches_terminees %}
+      <li class="list-group-item">{{ tache.titre }}</li>
+    {% empty %}
+      <li class="list-group-item">Aucune tâche terminée cette semaine</li>
+    {% endfor %}
+  </ul>
+
   <br>
-  <a href="{% url 'logout' %}">Se déconnecter</a>
+  <a href="{% url 'logout' %}" class="btn btn-outline-secondary">Se déconnecter</a>
+  
+</div>
 {% endblock %}

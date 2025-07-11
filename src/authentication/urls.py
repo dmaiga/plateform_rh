@@ -12,6 +12,12 @@ urlpatterns = [
     path('mon_profil/', views.mon_profil, name='mon-profil'),
     path('dashboard_rh/', views.dashboard_rh, name='dashboard-rh'),
     path('edit/<int:user_id>/', views.edit_user_rh, name='edit-user-rh'),
-    
+    path('create_fiche_poste',views.create_modele_fiche_poste,name='create-fiche-poste'),
+    path('liste_modeles_fiches',views.liste_modeles_fiches,name='liste-modeles-fiches'),
+    path('supprimer_fiche_poste/<int:fiche_id>/', views.supprimer_modele_fiche, name='supprimer-fiche-poste'),
+    path('ajouter_taches_modele/<int:fiche_id>/',views.ajouter_taches_modele,name='ajouter-taches-modele'),
+    path('modifier_tache/<int:tache_id>/', views.modifier_tache, name='modifier-tache'),
+    path('supprimer_tache/<int:tache_id>/', views.supprimer_tache, name='supprimer-tache'),
+
 ]
 

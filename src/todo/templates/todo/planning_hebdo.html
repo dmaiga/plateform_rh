@@ -1,32 +1,35 @@
 {% extends 'authentication/base.html' %}
 {% block content %}
-<h2 class="mb-4">🗓️ Planning de la semaine</h2>
+<h2 class="mb-4">🗓️ Planning de la semaine du {{ debut_semaine|date:"d/m/Y" }} au {{ fin_semaine|date:"d/m/Y" }}</h2>
+
 <div id="calendar"></div>
 
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js'></script>
-
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
+    
+    // Attention: cette syntaxe peut causer des problèmes avec certains caractères
+    var tachesData = JSON.parse('{{ taches_json|escapejs }}');
+    var events = tachesData.map(function(tache) {
+      return {
+        title: tache.titre + (tache.est_terminee ? ' ✅' : ''),
+        start: tache.date_planifiee + 'T' + (tache.heure_debut || '09:00:00'),
+        end: tache.date_planifiee + 'T' + (tache.heure_fin || '10:00:00'),
+        color: tache.est_terminee ? 'green' : (tache.heure_debut ? 'orange' : '#007bff')
+      };
+    });
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'timeGridWeek',
       locale: 'fr',
       allDaySlot: false,
       slotMinTime: "07:00:00",
       slotMaxTime: "19:00:00",
-events: [
-  {% for tache in taches %}
-  {
-    title: "{{ tache.titre|escapejs }}{% if tache.est_terminee %} ✅{% endif %}",
-    start: "{{ tache.date_planifiee }}T{{ tache.heure_debut|default:'09:00:00' }}",
-    end: "{{ tache.date_planifiee }}T{{ tache.heure_fin|default:'10:00:00' }}",
-    color: "{% if tache.est_terminee %}green{% elif tache.heure_debut %}orange{% else %}#007bff{% endif %}"
-  },
-  {% endfor %}
-]
-
+      events: events
     });
+    
     calendar.render();
   });
 </script>

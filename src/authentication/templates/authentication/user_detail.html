@@ -23,6 +23,7 @@
             <ul class="list-group mb-3">
                 <li class="list-group-item"><strong>Rôle :</strong> {{ user_cible.get_role_display }}</li>
                 <li class="list-group-item"><strong>Poste occupé :</strong> {{ user_cible.poste_occupe }}</li>
+                 <li class="list-group-item"><strong>Fiche de poste :</strong> {{ user_cible.fiche_poste }}</li>
                 <li class="list-group-item"><strong>Statut :</strong> {{ user_cible.get_statut_display }}</li>
                 <li class="list-group-item"><strong>Début de contrat :</strong> {{ user_cible.start_date|date:"d/m/Y" }}</li>
                 <li class="list-group-item"><strong>Date d'inscription :</strong> {{ user_cible.date_joined|date:"d/m/Y" }}</li>
@@ -51,7 +52,7 @@
             </ul>
 
             <a href="{% url 'dashboard-rh' %}" class="btn btn-secondary mt-3">← Retour au tableau</a>
-            <a class="btn btn-secondary mt-3" href="{% url 'edit-user-rh' user.id %}">✏️ Modifier</a>
+            <a class="btn btn-secondary mt-3" href="{% url 'edit-user-rh' user_cible.id %}">✏️ Modifier</a>
         </div>
     </div>
 </div>

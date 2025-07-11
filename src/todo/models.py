@@ -11,15 +11,9 @@ JOUR_CHOICES = [
     ("VEN", "Vendredi"),
 ]
 
-class FichePoste(models.Model):
-    titre = models.CharField(max_length=255)
-    employe = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fiches")
-
-    def __str__(self):
-        return f"{self.titre} - {self.employe.get_full_name()}"
 
 class Tache(models.Model):
-    fiche_poste = models.ForeignKey(FichePoste, on_delete=models.CASCADE, related_name="taches")
+    fiche_poste = models.ForeignKey('FichePoste', on_delete=models.CASCADE, related_name="taches")
     titre = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     priorite = models.IntegerField(default=3)
@@ -28,9 +22,21 @@ class Tache(models.Model):
     est_terminee = models.BooleanField(default=False)
     heure_debut = models.DateTimeField(null=True, blank=True)
     heure_fin = models.DateTimeField(null=True, blank=True)
-    duree_total = models.DurationField(default=0)
+    duree_total = models.DurationField(null=True, blank=True)
     commentaire_rh = models.TextField(blank=True)
     date_planifiee = models.DateField(null=True, blank=True)
     
     def __str__(self):
         return self.titre
+
+
+
+class FichePoste(models.Model):
+    titre = models.CharField(max_length=255)
+    employe = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fiches", null=True, blank=True)
+    is_modele = models.BooleanField(default=False) 
+
+    def __str__(self):
+        if self.is_modele:
+            return f"[Modèle] {self.titre}"
+        return f"{self.titre} - {self.employe.get_full_name() if self.employe else 'Non assignée'}"

@@ -1,0 +1,31 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+<h2>📝 Ajouter des tâches à : {{ fiche.titre }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <input type="text" name="titre" class="form-control mb-2" placeholder="Nom de la tâche" required>
+  <textarea name="description" class="form-control mb-2" placeholder="Description"></textarea>
+  <button type="submit" class="btn btn-success">Ajouter</button>
+</form>
+
+<hr>
+<h4>📋 Tâches existantes</h4>
+<ul class="list-group">
+  {% for tache in fiche.taches.all %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ tache.titre }}</strong><br>
+        <small>{{ tache.description }}</small>
+      </div>
+      <div>
+        <a href="{% url 'modifier-tache' tache.id %}" class="btn btn-sm btn-outline-primary me-2">✏️</a>
+        <a href="{% url 'supprimer-tache' tache.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette tâche ?')">🗑️</a>
+      </div>
+    </li>
+  {% empty %}
+    <li class="list-group-item">Aucune tâche encore.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

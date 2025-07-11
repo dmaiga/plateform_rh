@@ -28,6 +28,11 @@
             📊 Dashboard RH
         </a>
     </li>
+        <li class="nav-item">
+        <a class="nav-link {% if request.path == '/liste-modeles-fiches/' %}active{% endif %}" href="{% url 'liste-modeles-fiches' %}">
+           📋 Liste des modèles 
+        </a>
+    </li>
     {% endif %}
     
     <li class="nav-item">

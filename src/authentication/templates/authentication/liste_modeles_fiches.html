@@ -1,0 +1,22 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+<h2>📚 Modèles de Fiches de Poste</h2>
+<a href="{% url 'create-fiche-poste' %}" class="btn btn-primary mb-3">➕ Nouveau modèle</a>
+
+<ul class="list-group">
+  {% for modele in modeles %}
+<li class="list-group-item d-flex justify-content-between align-items-center">
+  <span>{{ modele.titre }}</span>
+  <div>
+    <a href="{% url 'ajouter-taches-modele' modele.id %}" class="btn btn-sm btn-outline-secondary">➕ Tâches</a>
+    <a href="{% url 'supprimer-fiche-poste' modele.id %}" class="btn btn-sm btn-outline-danger"
+       onclick="return confirm('Supprimer ce modèle ?');">🗑️</a>
+  </div>
+</li>
+
+    
+  {% empty %}
+    <li class="list-group-item">Aucun modèle pour le moment.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

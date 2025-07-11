@@ -1,12 +1,12 @@
 # authentication/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import login, authenticate ,logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
+from datetime import timedelta
 from . import forms 
 from .forms import CreateUserForm, PersonalUserUpdateForm, RHUserUpdateForm
 from .models import User
@@ -14,9 +14,86 @@ from logs.utils import enregistrer_action
 
 from todo.models import FichePoste, Tache  # importe les modèles du module todo
 from datetime import date
+from .forms import FichePosteForm
 
 def is_rh_or_admin(user):
     return user.is_authenticated and user.role in ['admin', 'rh']
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def supprimer_tache(request, tache_id):
+    tache = get_object_or_404(Tache, id=tache_id)
+    fiche_id = tache.fiche_poste.id
+    tache.delete()
+    messages.success(request, "🗑️ Tâche supprimée.")
+    return redirect('ajouter-taches-modele', fiche_id=fiche_id)
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def modifier_tache(request, tache_id):
+    tache = get_object_or_404(Tache, id=tache_id)
+
+    if request.method == 'POST':
+        tache.titre = request.POST.get('titre')
+        tache.description = request.POST.get('description')
+        tache.save()
+        messages.success(request, "✏️ Tâche modifiée.")
+        return redirect('ajouter-taches-modele', fiche_id=tache.fiche_poste.id)
+
+    return render(request, 'authentication/modifier_tache.html', {'tache': tache})
+
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def create_modele_fiche_poste(request):
+    if request.method == 'POST':
+        form = FichePosteForm(request.POST)
+        if form.is_valid():
+            fiche = form.save(commit=False)
+            fiche.is_modele = True
+            fiche.employe = None
+            fiche.save()
+            return redirect('liste-modeles-fiches')  
+    else:
+        form = FichePosteForm()
+    return render(request, 'authentication/create_modele_fiche.html', {'form': form})
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def supprimer_modele_fiche(request, fiche_id):
+    fiche = get_object_or_404(FichePoste, id=fiche_id, is_modele=True)
+    fiche.delete()
+    messages.success(request, "Modèle de fiche supprimé avec succès.")
+    return redirect('liste-modeles-fiches')
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def liste_modeles_fiches(request):
+    modeles = FichePoste.objects.filter(is_modele=True)
+    return render(request, 'authentication/liste_modeles_fiches.html', {'modeles': modeles})
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def ajouter_taches_modele(request, fiche_id):
+    fiche = get_object_or_404(FichePoste, id=fiche_id, is_modele=True)
+
+    if request.method == 'POST':
+        titre = request.POST.get('titre')
+        description = request.POST.get('description')
+        duree = request.POST.get('duree')
+
+        if titre:
+            duree_interval = timedelta(minutes=int(duree)) if duree else None
+            Tache.objects.create(
+                fiche_poste=fiche,
+                titre=titre,
+                description=description,
+                duree_total=duree_interval
+            )
+            messages.success(request, "✅ Tâche ajoutée avec succès.")
+            return redirect('ajouter-taches-modele', fiche_id=fiche.id)
+
+    return render(request, 'authentication/ajouter_taches_modele.html', {'fiche': fiche})
 
 @login_required
 @user_passes_test(is_rh_or_admin)
@@ -89,18 +166,44 @@ def dashboard(request):
 
 
 
+from todo.models import FichePoste, Tache
+
 @login_required
 @user_passes_test(is_rh_or_admin)
 def create_user_view(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
+            fiche_modele = form.cleaned_data.get('fiche_poste_modele')
             user = form.save(commit=False)
-            user.set_password('pass123') 
+            user.set_password('pass123')
             user.save()
+
+            if fiche_modele:
+                nouvelle_fiche = FichePoste.objects.create(
+                    titre=fiche_modele.titre,
+                    employe=user,
+                    is_modele=False
+                )
+            
+                # Clonage des tâches
+                for tache in fiche_modele.taches.all():
+                    Tache.objects.create(
+                        fiche_poste=nouvelle_fiche,
+                        titre=tache.titre,
+                        description=tache.description,
+                        priorite=tache.priorite,
+                        jour_prevu=tache.jour_prevu,
+                        commentaire_rh=tache.commentaire_rh
+                    )
+            
+                # Affectation automatique
+                user.fiche_poste = nouvelle_fiche
+                user.save()
+            
+
             enregistrer_action(request.user, 'CREATE_USER', f"Création de {user.username}")
             messages.success(request, f"✅ Utilisateur {user.username} créé avec succès.")
-            print(f"Utilisateur {user.username} créé avec succès.")
             return redirect('dashboard')
         else:
             messages.error(request, "⚠️ Erreur dans le formulaire : vérifiez les champs.")
@@ -171,3 +274,4 @@ def edit_user_rh(request, user_id):
         form = RHUserUpdateForm(instance=user_cible)
 
     return render(request, 'authentication/edit_user_rh.html', {'form': form, 'user_cible': user_cible})
+

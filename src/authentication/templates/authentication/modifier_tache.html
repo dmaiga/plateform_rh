@@ -1,0 +1,12 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+<h2>✏️ Modifier une tâche</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <input type="text" name="titre" class="form-control mb-2" value="{{ tache.titre }}" required>
+  <textarea name="description" class="form-control mb-2">{{ tache.description }}</textarea>
+  <button type="submit" class="btn btn-success">Enregistrer</button>
+  <a href="{% url 'ajouter-taches-modele' tache.fiche_poste.id %}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}

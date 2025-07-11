@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('admin', 'Administrateur'),
@@ -34,7 +35,7 @@ class User(AbstractUser):
     telephone_perso = models.CharField(max_length=20, blank=True)
     date_naissance = models.DateField(null=True, blank=True)
     contact_urgence = models.CharField(max_length=100, blank=True)
-
+    fiche_poste = models.ForeignKey('todo.FichePoste', null=True, blank=True, on_delete=models.SET_NULL, related_name='users')
     def __str__(self):
         return f"{self.get_full_name()} ({self.role})"
 

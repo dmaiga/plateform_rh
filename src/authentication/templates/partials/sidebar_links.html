@@ -3,6 +3,11 @@
     <a class="text-decoration-none text-dark" href="{% url 'dashboard' %}">AntaresRH</a>
 </h4>
 <ul class="nav flex-column">
+        <li class="nav-item">
+        <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
+            📊 Dashboard 
+        </a>
+    </li>
     <li class="nav-item">
         <a class="nav-link {% if request.path == '/documents/' %}active{% endif %}" href="{% url 'document-list' %}">
             📂 Documents
@@ -34,7 +39,7 @@
         </a>
     </li>
     {% endif %}
-    
+
     <li class="nav-item">
         <a class="nav-link {% if request.path == '/profil/' %}active{% endif %}" href="{% url 'mon-profil' %}">
             👤 Mon Profil
@@ -48,7 +53,3 @@
     
 </ul>
 
-<div class="mt-5 small text-muted">
-    Connecté :<br>
-    <strong>{{ user.get_full_name|upper }} ({{ user.role }})</strong>
-</div>

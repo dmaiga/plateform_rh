@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'notes',
     'channels',
     'todo',
+    
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'notes.context_processors.notes_non_lues',
             ],
+
         },
     },
 ]
@@ -117,7 +119,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr'
+USE_L10N = True
 
 TIME_ZONE = 'UTC'
 

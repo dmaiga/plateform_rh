@@ -1,0 +1,44 @@
+{% extends "authentication/base.html" %}
+{% block content %}
+<div class="container py-3">
+    <h2 class="mb-4">📋 Mes Tâches du {{ date_selection|date:"l d F Y" }}</h2>
+
+    {% if taches_selectionnees %}
+    <div class="list-group mb-4">
+        {% for sel in taches_selectionnees %}
+        {% with t=sel.tache %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <a href="{% url 'detail-tache' sel.id %}" class="fw-bold text-decoration-none">
+                    {{ t.titre }}
+                </a>
+                <br>
+                <small class="text-muted">
+                    {% if sel.is_done %}✔ Terminé
+                    {% elif sel.is_started %}⏳ En cours
+                    {% else %}🕓 Non démarré
+                    {% endif %}
+                </small>
+            </div>
+            <form method="post" action="{% url 'supprimer-tache-selectionnee' sel.id %}" onsubmit="return confirm('Supprimer cette tâche ?');">
+                {% csrf_token %}
+                <button class="btn btn-outline-danger btn-sm">🗑 Supprimer</button>
+            </form>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        Aucune tâche programmée pour cette date.
+        <a href="{% url 'selection-taches' %}?date={{ date_selection }}" class="alert-link">Ajouter des tâches</a>.
+    </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-sm me-2">Retour au tableau de bord</a>
+        <a href="{% url 'selection-taches' %}?date={{ date_selection }}" class="btn btn-primary btn-sm me-2">+ Ajouter des tâches</a>
+       
+    </div>
+</div>
+{% endblock %}

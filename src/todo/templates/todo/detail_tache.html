@@ -1,0 +1,35 @@
+{% extends "authentication/base.html" %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-3">📝 Détail de la Tâche</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{ tache.titre }}</h4>
+            <p class="card-text">
+                <strong>Date sélectionnée :</strong> {{ selection.date_selection|date:"l d F Y" }}<br>
+                <strong>Fiche de poste :</strong> {{ tache.fiche_poste.nom }}<br>
+                <strong>État :</strong>
+                {% if selection.is_done %}✔ Terminé
+                {% elif selection.is_started %}⏳ En cours
+                {% else %}🕓 Non démarré
+                {% endif %}
+                <br>
+                {% if tache.date_planifiee %}
+                    <strong>Date planifiée :</strong> {{ tache.date_planifiee|date:"d/m/Y" }}<br>
+                {% endif %}
+                {% if tache.heure_debut and tache.heure_fin %}
+                    <strong>Heure :</strong> {{ tache.heure_debut|time:"H:i" }} - {{ tache.heure_fin|time:"H:i" }}<br>
+                {% endif %}
+                {% if tache.priorite %}
+                    <strong>Priorité :</strong> {{ tache.priorite }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'mes-taches' %}?date={{ selection.date_selection }}" class="btn btn-secondary btn-sm">⬅ Retour</a>
+    </div>
+</div>
+{% endblock %}

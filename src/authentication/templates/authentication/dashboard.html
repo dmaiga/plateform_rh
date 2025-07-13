@@ -1,56 +1,260 @@
-{% extends 'authentication/base.html' %}
+{% extends "authentication/base.html" %}
+{% load static %}
+{% load todo_extras %}
+
 {% block content %}
-<div class="container">
-  <h2 class="mb-4">🎯 Mon Dashboard</h2>
-  <p>Bonjour {{ request.user.get_full_name }} !</p>
+<div class="container py-4">
+    <!-- 🎯 Header avec ombre portée et fond légèrement coloré -->
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded-3 shadow-sm">
+        <div>
+            <h2 class="mb-0 text-primary">🎯 Tableau de bord</h2>
+            <p class="text-muted mb-0 small">{{ nb_terminees }}/{{ nb_total }} tâches complétées</p>
+        </div>
+        <div class="btn-group">
+            <a href="{% url 'selection-taches' %}" class="btn btn-outline-secondary btn-sm hover-effect">
+                <i class="bi bi-plus-circle"></i> Ajouter aujourd'hui
+            </a>
+            <a href="{% url 'mes-taches' %}" class="btn btn-primary btn-sm hover-effect">
+                <i class="bi bi-list-check"></i> Gérer
+            </a>
+        </div>
+    </div>
 
-  <h4>📌 Tâches prévues pour aujourd’hui</h4>
-  <ul class="list-group mb-4">
-    {% for tache in taches_aujourdhui %}
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        {{ tache.titre }}
-        {% if tache.est_terminee %}
-          ✅
-        {% elif tache.heure_debut and not tache.heure_fin %}
-          ⏱️ En cours
-        {% else %}
-          ⏳ À faire
-        {% endif %}
-      </li>
-    {% empty %}
-      <li class="list-group-item">Aucune tâche prévue pour aujourd’hui</li>
-    {% endfor %}
-  </ul>
+    <!-- 🔹 Section Planning avec séparateur visuel -->
+    <div class="mt-5 pt-3 border-top">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none hover-effect">
+                <h5 class="mb-0 text-dark">
+                    <i class="bi bi-calendar-week"></i> Planning de la semaine
+                </h5>
+            </a>
+            <a href="{% url 'programmer-semaine' %}" class="btn btn-outline-primary btn-sm hover-effect">
+                <i class="bi bi-pencil-square"></i> Programmer
+            </a>
+        </div>
 
-  <h4>🕒 Tâches en cours</h4>
-  <ul class="list-group mb-4">
-    {% for tache in taches_en_cours %}
-      <li class="list-group-item">{{ tache.titre }} — démarrée à {{ tache.heure_debut|date:"H:i" }}</li>
-    {% empty %}
-      <li class="list-group-item">Aucune tâche en cours</li>
-    {% endfor %}
-  </ul>
+        <!-- Navigation semaine avec style amélioré -->
+        <div class="d-flex justify-content-between align-items-center mb-3 bg-white p-2 rounded shadow-sm">
+            <a href="?semaine={{ offset|add:"-1" }}" class="btn btn-sm btn-outline-secondary hover-effect">
+                <i class="bi bi-chevron-left"></i> Précédente
+            </a>
+            <strong class="text-primary">Semaine du {{ jours.0|date:"d M" }} au {{ jours.6|date:"d M Y" }}</strong>
+            <a href="?semaine={{ offset|add:"1" }}" class="btn btn-sm btn-outline-secondary hover-effect">
+                Suivante <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
 
-  <h4>📂 Tâches à faire</h4>
-  <ul class="list-group mb-4">
-    {% for tache in taches_a_faire %}
-      <li class="list-group-item">{{ tache.titre }}</li>
-    {% empty %}
-      <li class="list-group-item">Toutes les tâches sont en cours ou terminées</li>
-    {% endfor %}
-  </ul>
+        <!-- Tableau avec hover et transitions -->
+        <div class="table-responsive">
+            <table class="table table-borderless text-center align-middle small">
+                <thead class="bg-light">
+                    <tr>
+                        {% for jour in jours %}
+                            <th class="py-3 {% if jour|date:"D" == 'now'|date:"D" %}bg-primary text-white{% endif %}">
+                                {{ jour|date:"l" }}<br>
+                                <span class="badge {% if jour|date:"D" == 'now'|date:"D" %}bg-white text-primary{% else %}bg-secondary{% endif %} rounded-pill">
+                                    {{ jour|date:"d" }}
+                                </span>
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for jour in jours %}
+                            <td class="p-2" style="min-width: 150px; height: 120px;">
+                                <div class="h-100 d-flex flex-column">
+                                    {% with liste=taches_par_jour|get_item:jour %}
+                                        {% if liste %}
+                                            {% for sel in liste %}
+                                                <div class="task-card mb-1 p-2 rounded {% if sel.is_done %}bg-success-light border-start border-success border-3{% elif sel.is_started %}bg-warning-light border-start border-warning border-3{% else %}bg-light{% endif %}">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span class="text-truncate">{{ sel.tache.titre }}</span>
+                                                        {% if sel.is_done %}
+                                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                                        {% elif sel.is_started %}
+                                                            <i class="bi bi-arrow-repeat text-warning"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="text-muted small h-100 d-flex align-items-center justify-content-center">
+                                                <span>Aucune tâche</span>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-  <h4>✅ Tâches terminées</h4>
-  <ul class="list-group">
-    {% for tache in taches_terminees %}
-      <li class="list-group-item">{{ tache.titre }}</li>
-    {% empty %}
-      <li class="list-group-item">Aucune tâche terminée cette semaine</li>
-    {% endfor %}
-  </ul>
-
-  <br>
-  <a href="{% url 'logout' %}" class="btn btn-outline-secondary">Se déconnecter</a>
-  
+    <!-- 🏷️ Filtres sous forme de pills -->
+    <div class="mb-4">
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <!-- Filtre Toutes -->
+    <a href="?filtre=all" 
+       class="badge {% if filtre_actuel == 'all' %}bg-primary{% else %}bg-light text-dark{% endif %} p-2 text-decoration-none">
+        Toutes ({{ nb_total }})
+    </a>
+    
+    <!-- Filtre En cours -->
+    <a href="?filtre=en_cours" 
+       class="badge {% if filtre_actuel == 'en_cours' %}bg-warning{% else %}bg-light text-dark{% endif %} p-2 text-decoration-none">
+        En cours ({{ nb_en_cours }})
+    </a>
+    
+    <!-- Filtre Pause -->
+    <a href="?filtre=pause" 
+       class="badge {% if filtre_actuel == 'pause' %}bg-warning{% else %}bg-light text-dark{% endif %} p-2 text-decoration-none">
+        Pauses ({{ nb_pause }})
+    </a>
+    
+    <!-- Filtre Terminées -->
+    <a href="?filtre=terminees" 
+       class="badge {% if filtre_actuel == 'terminees' %}bg-success{% else %}bg-light text-dark{% endif %} p-2 text-decoration-none">
+        Terminées ({{ nb_terminees }})
+    </a>
 </div>
+</div>
+    </div>
+
+    <!-- 📝 Liste des tâches avec animations -->
+<div class="list-group mb-4 shadow-sm">
+    {% for sel in taches_auj %}
+        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3 hover-effect">
+            <div class="d-flex align-items-center flex-grow-1">
+                <div class="me-3">
+                    <!-- Icône d'état -->
+                    {% if sel.is_done %}
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                    {% elif sel.is_paused %}
+                        <i class="bi bi-pause-circle text-secondary fs-5"></i>
+                    {% elif sel.is_started %}
+                        <i class="bi bi-arrow-repeat text-warning fs-5"></i>
+                    {% else %}
+                        <i class="bi bi-circle text-muted fs-5"></i>
+                    {% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <div>
+                            <strong>{{ sel.tache.titre }}</strong>
+                            <div class="text-muted small">
+                                {% if sel.is_done %}
+                                    Terminée à {{ sel.end_time|time }}
+                                {% elif sel.is_paused %}
+                                    En pause depuis {{ sel.pause_time|time }}
+                                {% elif sel.is_started %}
+                                    Démarrée à {{ sel.start_time|time }}
+                                {% else %}
+                                    Non démarrée
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Temps écoulé à droite -->
+                        <div class="text-end ms-3">
+                            {% if sel.is_done %}
+                                <span class="badge bg-light text-dark">
+                                    {{ sel.start_time|timesince:sel.end_time }}
+                                </span>
+                            {% elif sel.is_started %}
+                                <span class="badge bg-light text-dark chrono" 
+                                      data-started="{{ sel.start_time|date:'U' }}">
+                                    {{ sel.start_time|timesince }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <form method="post" action="{% url 'changer-etat-tache-selectionnee' sel.id %}">
+                    {% csrf_token %}
+                    <div class="btn-group btn-group-sm shadow">
+                        {% if sel.is_done %}
+                            <button class="btn btn-light" disabled><i class="bi bi-check-all"></i></button>
+                        {% elif sel.is_paused %}
+                            <button name="action" value="start" class="btn btn-primary"><i class="bi bi-play"></i></button>
+                            <button name="action" value="done" class="btn btn-success"><i class="bi bi-check"></i></button>
+                        {% elif sel.is_started %}
+                            <button name="action" value="pause" class="btn btn-warning"><i class="bi bi-pause"></i></button>
+                            <button name="action" value="done" class="btn btn-success"><i class="bi bi-check"></i></button>
+                        {% else %}
+                            <button name="action" value="start" class="btn btn-primary"><i class="bi bi-play"></i></button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        {% empty %}
+            <div class="text-center py-5 bg-light rounded-3">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <h5 class="mt-3">Aucune tâche aujourd'hui</h5>
+                <a href="{% url 'selection-taches' %}" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-circle"></i> Commencer
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .hover-effect {
+        transition: all 0.2s ease;
+    }
+    .hover-effect:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .task-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .task-card:hover {
+        transform: scale(1.02);
+    }
+    .bg-success-light {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+    .bg-warning-light {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+    .chrono {
+    font-family: monospace;
+    background: rgba(0,0,0,0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #666;
+}
+</style>
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function formatDuration(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        return `${hours}h${minutes.toString().padStart(2, '0')}`;
+    }
+
+    function updateChronos() {
+        const now = Math.floor(Date.now() / 1000);
+        
+        document.querySelectorAll('.chrono').forEach(chrono => {
+            const started = parseInt(chrono.dataset.started);
+            if (!isNaN(started)) {
+                const elapsed = now - started;
+                chrono.textContent = formatDuration(elapsed);
+            }
+        });
+    }
+
+    updateChronos();
+    setInterval(updateChronos, 60000); // Mise à jour toutes les minutes
+});
+</script>
+{% endblock %}
 {% endblock %}

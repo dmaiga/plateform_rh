@@ -12,9 +12,14 @@ from .forms import CreateUserForm, PersonalUserUpdateForm, RHUserUpdateForm
 from .models import User
 from logs.utils import enregistrer_action
 
-from todo.models import FichePoste, Tache  # importe les modèles du module todo
+from todo.models import FichePoste, Tache,TacheSelectionnee  # importe les modèles du module todo
 from datetime import date
 from .forms import FichePosteForm
+from django.utils import timezone
+
+from todo.views import get_planning_context
+
+
 
 def is_rh_or_admin(user):
     return user.is_authenticated and user.role in ['admin', 'rh']
@@ -138,32 +143,41 @@ def mon_profil(request):
 
 
 
+
 @login_required
 def dashboard(request):
-    if request.user.role in ["rh", "admin"]:
-        return redirect('dashboard-rh')
+    today = timezone.localdate()
+    filtre = request.GET.get("filtre", "all")
 
-    employe = request.user
+    # Base queryset - utilise les champs de TacheSelectionnee directement
+    taches_auj = TacheSelectionnee.objects.filter(user=request.user, date_selection=today)
+    taches_filtrees = taches_auj
 
-    fiches = FichePoste.objects.filter(employe=employe)
-    toutes_taches = Tache.objects.filter(fiche_poste__in=fiches).order_by(
-        '-prevue_aujourdhui', 'est_terminee', 'priorite'
-    )
+    # Filtrage cohérent avec le modèle
+    if filtre == "terminees":
+        taches_filtrees = taches_auj.filter(is_done=True)  # Supprimez tache__
+    elif filtre == "en_cours":
+        taches_filtrees = taches_auj.filter(is_started=True, is_done=False)
+    elif filtre == "pause":
+        taches_filtrees = taches_auj.filter(is_paused=True)
 
-    taches_aujourdhui = toutes_taches.filter(prevue_aujourdhui=True)
-    taches_terminees = toutes_taches.filter(est_terminee=True)
-    taches_en_cours = toutes_taches.filter(heure_debut__isnull=False, heure_fin__isnull=True)
-    taches_a_faire = toutes_taches.filter(est_terminee=False, heure_debut__isnull=True)
-   
+    # Compteurs cohérents
+    nb_total = taches_auj.count()
+    nb_terminees = taches_auj.filter(is_done=True).count()
+    nb_en_cours = taches_auj.filter(is_started=True, is_done=False).count()
+    nb_pause = taches_auj.filter(is_paused=True).count()
+
+    planning_ctx = get_planning_context(request)
 
     return render(request, 'authentication/dashboard.html', {
-        'toutes_taches': toutes_taches,
-        'taches_aujourdhui': taches_aujourdhui,
-        'taches_en_cours': taches_en_cours,
-        'taches_terminees': taches_terminees,
-        'taches_a_faire': taches_a_faire,
+        'taches_auj': taches_filtrees,
+        'nb_total': nb_total,
+        'nb_terminees': nb_terminees,
+        'nb_en_cours': nb_en_cours,
+        'nb_pause': nb_pause,
+        'filtre_actuel': filtre,
+        **planning_ctx,
     })
-
 
 
 from todo.models import FichePoste, Tache
@@ -192,7 +206,7 @@ def create_user_view(request):
                         fiche_poste=nouvelle_fiche,
                         titre=tache.titre,
                         description=tache.description,
-                        priorite=tache.priorite,
+                        
                         jour_prevu=tache.jour_prevu,
                         commentaire_rh=tache.commentaire_rh
                     )
@@ -204,7 +218,7 @@ def create_user_view(request):
 
             enregistrer_action(request.user, 'CREATE_USER', f"Création de {user.username}")
             messages.success(request, f"✅ Utilisateur {user.username} créé avec succès.")
-            return redirect('dashboard')
+            return redirect('dashboard-rh')
         else:
             messages.error(request, "⚠️ Erreur dans le formulaire : vérifiez les champs.")
     else:

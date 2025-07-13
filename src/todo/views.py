@@ -7,9 +7,10 @@ from django.utils import timezone
 from .models import Tache, TacheSelectionnee, FichePoste, SuiviTache
 from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_POST
-
 from collections import defaultdict
 from calendar import day_name
+from django.db import transaction
+from django.utils.timezone import localdate
 
 
 @login_required
@@ -79,6 +80,7 @@ def get_planning_context(request):
         'taches_par_jour': taches_par_jour,
         'offset': offset,
     }
+
 @login_required
 def planning_hebdo(request):
     ctx = get_planning_context(request)
@@ -125,13 +127,11 @@ def selection_taches(request):
 def mes_taches(request):
     user = request.user
     date_str = request.GET.get("date")
-    date_selection = timezone.now().date()
+   
 
-    if date_str:
-        try:
-            date_selection = parse_date(date_str) or date_selection
-        except Exception:
-            pass
+    date_selection = parse_date(date_str) if date_str else localdate()
+    if not date_selection:
+        date_selection = localdate()
 
     taches_selectionnees = TacheSelectionnee.objects.filter(
         user=user,
@@ -158,50 +158,90 @@ def supprimer_tache_selectionnee(request, sel_id):
     sel.delete()
     return redirect("mes-taches")
 
+
 @require_POST
 @login_required
 def changer_etat_tache_selectionnee(request, sel_id):
     selection = get_object_or_404(TacheSelectionnee, id=sel_id, user=request.user)
-    action = request.POST.get('action')
+    action = request.POST.get("action")
     now = timezone.now()
 
-    if action == "start":
-        if not selection.is_started:
-            selection.is_started = True
-            selection.start_time = now
-            selection.save()
-            SuiviTache.objects.create(tache=selection.tache, user=request.user, start_time=now)
-        elif selection.is_paused:
-            selection.is_paused = False
-            selection.is_started = True  
-            selection.save()
-            SuiviTache.objects.create(tache=selection.tache, user=request.user, start_time=now)
+    with transaction.atomic():  # pour cohérence des changements
+        if action == "start":
+            # Arrêter toute autre tâche démarrée (exclusivité)
+            autres = TacheSelectionnee.objects.filter(
+                user=request.user,
+                is_started=True,
+                is_paused=False
+            ).exclude(id=selection.id)
+            for autre in autres:
+                autre.is_paused = True
+                autre.save()
+                suivi = SuiviTache.objects.filter(
+                    tache=autre.tache,
+                    user=request.user,
+                    end_time__isnull=True
+                ).last()
+                if suivi:
+                    suivi.end_time = now
+                    suivi.save()
 
-
-    elif action == "pause":
-        if selection.is_started and not selection.is_paused:
-            selection.is_paused = True
-            selection.save()
-            suivi = SuiviTache.objects.filter(tache=selection.tache, user=request.user, end_time__isnull=True).last()
-            if suivi:
-                suivi.end_time = now
-                suivi.save()
-
-    elif action == "done":
-        if selection.is_started and not selection.is_done:
-            selection.is_done = True
-            selection.end_time = now
+            if not selection.is_started:
+                selection.is_started = True
+                selection.start_time = now
             selection.is_paused = False
             selection.save()
-            suivi = SuiviTache.objects.filter(tache=selection.tache, user=request.user, end_time__isnull=True).last()
-            if suivi:
-                suivi.end_time = now
-                suivi.save()
-            total = timedelta()
-            for s in SuiviTache.objects.filter(tache=selection.tache, user=request.user):
-                total += s.duree()
-            selection.tache.duree_total = total
-            selection.tache.save()
+
+            SuiviTache.objects.create(
+                tache=selection.tache,
+                user=request.user,
+                start_time=now
+            )
+
+        elif action == "pause":
+            if selection.is_started and not selection.is_paused:
+                selection.is_paused = True
+                selection.pause_time = now  
+                selection.save()
+
+                suivi = SuiviTache.objects.filter(
+                    tache=selection.tache,
+                    user=request.user,
+                    end_time__isnull=True
+                ).last()
+                if suivi:
+                    suivi.end_time = now
+                    suivi.save()
+
+                elif action == "done":
+                    if selection.is_started and not selection.is_done:
+                        selection.is_done = True
+                        selection.is_paused = False
+                        selection.pause_time = None
+                        selection.end_time = now
+                        selection.save()
+
+
+                # Fermer suivi en cours
+                suivi = SuiviTache.objects.filter(
+                    tache=selection.tache,
+                    user=request.user,
+                    end_time__isnull=True
+                ).last()
+                if suivi:
+                    suivi.end_time = now
+                    suivi.save()
+
+                # Calcul total réel : somme des durées
+                total = timedelta()
+                for s in SuiviTache.objects.filter(
+                    tache=selection.tache,
+                    user=request.user
+                ):
+                    total += s.duree()
+
+                selection.tache.duree_total = total
+                selection.tache.end_time = now
+                selection.tache.save()
 
     return redirect("dashboard")
-

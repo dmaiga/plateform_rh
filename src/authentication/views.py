@@ -159,13 +159,14 @@ def dashboard(request):
     elif filtre == "en_cours":
         taches_filtrees = taches_auj.filter(is_started=True, is_done=False)
     elif filtre == "pause":
-        taches_filtrees = taches_auj.filter(is_paused=True)
+        taches_filtrees = taches_auj.filter(is_paused=True, is_done=False)
 
     # Compteurs cohérents
     nb_total = taches_auj.count()
     nb_terminees = taches_auj.filter(is_done=True).count()
     nb_en_cours = taches_auj.filter(is_started=True, is_done=False).count()
-    nb_pause = taches_auj.filter(is_paused=True).count()
+    nb_pause = taches_auj.filter(is_paused=True, is_done=False).count()
+
 
     planning_ctx = get_planning_context(request)
 

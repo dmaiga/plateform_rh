@@ -27,3 +27,11 @@ def progress_bar(done, total):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key, [])
+
+
+@register.filter
+def format_duree(td):
+    total_seconds = int(td.total_seconds())
+    heures, reste = divmod(total_seconds, 3600)
+    minutes, _ = divmod(reste, 60)
+    return f"{heures}h{minutes:02d}min"

@@ -83,8 +83,16 @@ class TacheSelectionnee(models.Model):
     is_paused = models.BooleanField(default=False)
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
+    pause_time = models.DateTimeField(null=True, blank=True)
+    
+    def duree_pause_en_cours(self):
+        if self.is_paused and self.pause_time:
+            return timezone.now() - self.pause_time
+        return timedelta(0)
     def __str__(self):
         return f"{self.user.username} - {self.tache.titre} ({self.date_selection})"
+
+
 
 class FichePoste(models.Model):
     titre = models.CharField(max_length=255)

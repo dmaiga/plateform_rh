@@ -66,18 +66,22 @@
                                 <div class="h-100 d-flex flex-column">
                                     {% with liste=taches_par_jour|get_item:jour %}
                                         {% if liste %}
-                                            {% for sel in liste %}
-                                                <div class="task-card mb-1 p-2 rounded {% if sel.is_done %}bg-success-light border-start border-success border-3{% elif sel.is_started %}bg-warning-light border-start border-warning border-3{% else %}bg-light{% endif %}">
-                                                    <div class="d-flex justify-content-between">
-                                                        <span class="text-truncate">{{ sel.tache.titre }}</span>
-                                                        {% if sel.is_done %}
-                                                            <i class="bi bi-check-circle-fill text-success"></i>
-                                                        {% elif sel.is_started %}
-                                                            <i class="bi bi-arrow-repeat text-warning"></i>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            {% endfor %}
+{% for sel in liste %}
+<a href="{% url 'mes-taches' %}?date={{ sel.date_selection|date:"Y-m-d" }}" class="text-decoration-none text-dark">
+
+        <div class="task-card mb-1 p-2 rounded {% if sel.is_done %}bg-success-light border-start border-success border-3{% elif sel.is_started %}bg-warning-light border-start border-warning border-3{% else %}bg-light{% endif %}">
+            <div class="d-flex justify-content-between">
+                <span class="text-truncate">{{ sel.tache.titre }}</span>
+                {% if sel.is_done %}
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                {% elif sel.is_started %}
+                    <i class="bi bi-arrow-repeat text-warning"></i>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+{% endfor %}
+
                                         {% else %}
                                             <div class="text-muted small h-100 d-flex align-items-center justify-content-center">
                                                 <span>Aucune tâche</span>
@@ -148,7 +152,9 @@
                                 {% if sel.is_done %}
                                     Terminée à {{ sel.end_time|time }}
                                 {% elif sel.is_paused %}
-                                    En pause depuis {{ sel.pause_time|time }}
+                                    En pause depuis {{ sel.pause_time|time }} 
+                                    ({{ sel.duree_pause_en_cours|format_duree }})
+
                                 {% elif sel.is_started %}
                                     Démarrée à {{ sel.start_time|time }}
                                 {% else %}

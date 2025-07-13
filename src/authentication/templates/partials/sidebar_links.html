@@ -1,39 +1,46 @@
-
 <h4 class="fw-bold mb-4">
     <a class="text-decoration-none text-dark" href="{% url 'dashboard' %}">AntaresRH</a>
 </h4>
+
 <ul class="nav flex-column">
-        <li class="nav-item">
+   {% if user.role in 'employee stagiare' %}    
+    <li class="nav-item">
         <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
             📊 Dashboard 
         </a>
     </li>
+    {% endif %}
+
     <li class="nav-item">
         <a class="nav-link {% if request.path == '/documents/' %}active{% endif %}" href="{% url 'document-list' %}">
             📂 Documents
         </a>
     </li>
+
     <li class="nav-item d-flex justify-content-between align-items-center">
         <a class="nav-link {% if request.path == '/notes/' %}active{% endif %}" href="{% url 'inbox' %}">
             ✉️ Notes
         </a>
         {% if notes_non_lues > 0 %}
-            <a href="{% url 'inbox' %}">
-              🔔 <span id="noteCounter" class="badge bg-danger {% if notes_non_lues == 0 %}d-none{% endif %}">
-                {{ notes_non_lues }}
-              </span>
-            </a>
-
-            
+        <span id="noteCounter" class="badge bg-danger">
+            {{ notes_non_lues }}
+        </span>
         {% endif %}
     </li>
+
     {% if user.role in 'admin rh' %}
+    <li class="nav-item mt-3">
+        <hr>
+        <span class="nav-link disabled text-uppercase text-muted small">Espace RH</span>
+    </li>
+
     <li class="nav-item">
         <a class="nav-link {% if request.path == '/dashboard-rh/' %}active{% endif %}" href="{% url 'dashboard-rh' %}">
             📊 Dashboard RH
         </a>
     </li>
-        <li class="nav-item">
+
+    <li class="nav-item">
         <a class="nav-link {% if request.path == '/liste-modeles-fiches/' %}active{% endif %}" href="{% url 'liste-modeles-fiches' %}">
            📋 Liste des modèles 
         </a>
@@ -45,11 +52,10 @@
             👤 Mon Profil
         </a>
     </li>
+
     <li class="nav-item mt-4">
         <a class="nav-link text-danger" href="{% url 'logout' %}">
             🚪 Déconnexion
         </a>
     </li>
-    
 </ul>
-

@@ -6,12 +6,18 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">{{ tache.titre }}</h4>
+            
+            {% if tache.description %}
+                <p class="card-text text-muted">{{ tache.description }}</p>
+            {% endif %}
+
             <p class="card-text">
                 <strong>Date sélectionnée :</strong> {{ selection.date_selection|date:"l d F Y" }}<br>
-                <strong>Fiche de poste :</strong> {{ tache.fiche_poste.nom }}<br>
+                <strong>Fiche de poste :</strong> {{ tache.fiche_poste.titre }}<br>
                 <strong>État :</strong>
                 {% if selection.is_done %}✔ Terminé
                 {% elif selection.is_started %}⏳ En cours
+                {% elif selection.is_paused %}⏸ En pause
                 {% else %}🕓 Non démarré
                 {% endif %}
                 <br>

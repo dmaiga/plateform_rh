@@ -89,10 +89,23 @@ class TacheSelectionnee(models.Model):
         if self.is_paused and self.pause_time:
             return timezone.now() - self.pause_time
         return timedelta(0)
+    def duree_active(self):
+        # Somme des suivis de la tâche pour l'user et date (optionnel, si tu veux)
+        suivis = SuiviTache.objects.filter(tache=self.tache, user=self.user)
+        total = timedelta()
+        for s in suivis:
+            total += s.duree()
+        return total
+    
+    @property
+    def duree_active_affichee(self):
+        total = self.duree_active()
+        heures, reste = divmod(total.seconds, 3600)
+        minutes, secondes = divmod(reste, 60)
+        return f"{heures:02d}:{minutes:02d}:{secondes:02d}"
+    
     def __str__(self):
         return f"{self.user.username} - {self.tache.titre} ({self.date_selection})"
-
-
 
 class FichePoste(models.Model):
     titre = models.CharField(max_length=255)

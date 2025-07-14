@@ -153,8 +153,7 @@
                                     Terminée à {{ sel.end_time|time }}
                                 {% elif sel.is_paused %}
                                     En pause depuis {{ sel.pause_time|time }} 
-                                    ({{ sel.duree_pause_en_cours|format_duree }})
-
+                                    
                                 {% elif sel.is_started %}
                                     Démarrée à {{ sel.start_time|time }}
                                 {% else %}
@@ -168,12 +167,22 @@
                                 <span class="badge bg-light text-dark">
                                     {{ sel.start_time|timesince:sel.end_time }}
                                 </span>
-                            {% elif sel.is_started %}
-                                <span class="badge bg-light text-dark chrono" 
-                                      data-started="{{ sel.start_time|date:'U' }}">
-                                    {{ sel.start_time|timesince }}
-                                </span>
-                            {% endif %}
+{% elif sel.is_started %}
+<span class="badge bg-light text-dark chrono"
+      data-sel-id="{{ sel.id }}"
+      data-initial="{{ sel.duree_active.total_seconds|floatformat:0 }}"
+      data-started="{{ sel.start_time|date:'U' }}">
+
+        {{ sel.duree_active_affichee }}
+    </span>
+{% elif sel.is_paused %}
+    <span class="badge bg-light text-dark">
+        {{ sel.duree_active_affichee }}
+    </span>
+{% endif %}
+
+
+
                         </div>
                     </div>
                 </div>
@@ -236,31 +245,43 @@
     font-size: 0.85em;
     color: #666;
 }
-</style>
-{% block extra_js %}
+</style>{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Format HHhMM
     function formatDuration(seconds) {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
-        return `${hours}h${minutes.toString().padStart(2, '0')}`;
+        return `${hours.toString().padStart(2, '0')}h${minutes.toString().padStart(2, '0')}`;
     }
 
     function updateChronos() {
-        const now = Math.floor(Date.now() / 1000);
-        
+        const now = Date.now();
+
         document.querySelectorAll('.chrono').forEach(chrono => {
-            const started = parseInt(chrono.dataset.started);
-            if (!isNaN(started)) {
-                const elapsed = now - started;
-                chrono.textContent = formatDuration(elapsed);
+            const startTimestamp = parseFloat(chrono.dataset.initial); // temps déjà effectué
+            const startedAt = parseInt(chrono.dataset.started || chrono.dataset.startTime || null);
+
+            if (!isNaN(startTimestamp) && startedAt) {
+                const elapsed = Math.floor((now / 1000) - startedAt);
+                const total = startTimestamp + elapsed;
+                chrono.textContent = formatDuration(total);
             }
         });
     }
 
+    // Initialiser les timestamps de début (en cas d’affichage dynamique)
+    document.querySelectorAll('.chrono').forEach(chrono => {
+        // Pour être sûr que "started" est bien défini
+        if (!chrono.dataset.started) {
+            chrono.dataset.started = Math.floor(Date.now() / 1000);
+        }
+    });
+
     updateChronos();
-    setInterval(updateChronos, 60000); // Mise à jour toutes les minutes
+    setInterval(updateChronos, 60000); // Toutes les minutes
 });
 </script>
 {% endblock %}
+
 {% endblock %}

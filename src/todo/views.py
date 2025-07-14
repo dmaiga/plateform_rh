@@ -158,7 +158,6 @@ def supprimer_tache_selectionnee(request, sel_id):
     sel.delete()
     return redirect("mes-taches")
 
-
 @require_POST
 @login_required
 def changer_etat_tache_selectionnee(request, sel_id):
@@ -166,22 +165,25 @@ def changer_etat_tache_selectionnee(request, sel_id):
     action = request.POST.get("action")
     now = timezone.now()
 
-    with transaction.atomic():  # pour cohérence des changements
+    with transaction.atomic():
         if action == "start":
-            # Arrêter toute autre tâche démarrée (exclusivité)
+            # Mettre en pause les autres tâches
             autres = TacheSelectionnee.objects.filter(
                 user=request.user,
                 is_started=True,
                 is_paused=False
             ).exclude(id=selection.id)
+
             for autre in autres:
                 autre.is_paused = True
                 autre.save()
+
                 suivi = SuiviTache.objects.filter(
                     tache=autre.tache,
                     user=request.user,
                     end_time__isnull=True
                 ).last()
+
                 if suivi:
                     suivi.end_time = now
                     suivi.save()
@@ -189,6 +191,7 @@ def changer_etat_tache_selectionnee(request, sel_id):
             if not selection.is_started:
                 selection.is_started = True
                 selection.start_time = now
+
             selection.is_paused = False
             selection.save()
 
@@ -201,7 +204,8 @@ def changer_etat_tache_selectionnee(request, sel_id):
         elif action == "pause":
             if selection.is_started and not selection.is_paused:
                 selection.is_paused = True
-                selection.pause_time = now  
+                selection.is_started = False  # Ajout ici pour arrêter le chrono
+                selection.pause_time = now
                 selection.save()
 
                 suivi = SuiviTache.objects.filter(
@@ -209,39 +213,43 @@ def changer_etat_tache_selectionnee(request, sel_id):
                     user=request.user,
                     end_time__isnull=True
                 ).last()
+
                 if suivi:
                     suivi.end_time = now
                     suivi.save()
 
-                elif action == "done":
-                    if selection.is_started and not selection.is_done:
-                        selection.is_done = True
-                        selection.is_paused = False
-                        selection.pause_time = None
-                        selection.end_time = now
-                        selection.save()
 
-
-                # Fermer suivi en cours
+        elif action == "done":
+            if (selection.is_started or selection.is_paused) and not selection.is_done:
+                selection.is_done = True
+                selection.is_started = False
+                selection.is_paused = False
+                selection.pause_time = None
+                selection.end_time = now
+                selection.save()
+        
+                # Fermer un suivi en cours s’il y en a (rare dans ce cas précis)
                 suivi = SuiviTache.objects.filter(
                     tache=selection.tache,
                     user=request.user,
                     end_time__isnull=True
                 ).last()
+        
                 if suivi:
                     suivi.end_time = now
                     suivi.save()
-
-                # Calcul total réel : somme des durées
+        
+                # Calcule de la durée réelle (somme des suivis)
                 total = timedelta()
                 for s in SuiviTache.objects.filter(
                     tache=selection.tache,
                     user=request.user
                 ):
                     total += s.duree()
-
+        
                 selection.tache.duree_total = total
                 selection.tache.end_time = now
                 selection.tache.save()
+        
 
     return redirect("dashboard")

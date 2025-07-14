@@ -1,61 +1,125 @@
-<h4 class="fw-bold mb-4">
-    <a class="text-decoration-none text-dark" href="{% url 'dashboard' %}">AntaresRH</a>
-</h4>
+<!-- partials/sidebar_links.html -->
+<div class="sidebar-container h-100 d-flex flex-column bg-white">
+    <!-- Logo -->
+    <div class="sidebar-header p-4 text-center border-bottom">
+        <h4 class="mb-0">
+            <a class="text-decoration-none text-primary" href="{% url 'dashboard' %}">
+                <i class="bi bi-rocket me-2 text-warning"></i>
+                <span class="fw-bold">Antares</span><span class="text-warning">RH</span>
+            </a>
+        </h4>
+    </div>
 
-<ul class="nav flex-column">
-   {% if user.role in 'employee stagiare' %}    
-    <li class="nav-item">
-        <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
-            📊 Dashboard 
-        </a>
-    </li>
-    {% endif %}
-
-    <li class="nav-item">
-        <a class="nav-link {% if request.path == '/documents/' %}active{% endif %}" href="{% url 'document-list' %}">
-            📂 Documents
-        </a>
-    </li>
-
-    <li class="nav-item d-flex justify-content-between align-items-center">
-        <a class="nav-link {% if request.path == '/notes/' %}active{% endif %}" href="{% url 'inbox' %}">
-            ✉️ Notes
-        </a>
-        {% if notes_non_lues > 0 %}
-        <span id="noteCounter" class="badge bg-danger">
-            {{ notes_non_lues }}
-        </span>
+    <!-- Menu principal -->
+    <ul class="nav flex-column flex-grow-1 p-3">
+        {% if user.role in 'employee stagiare' %}
+        <li class="nav-item mb-2">
+            <a class="nav-link text-dark {% if request.path == '/dashboard/' %}active-link{% endif %}" 
+               href="{% url 'dashboard' %}">
+                <i class="bi bi-speedometer2 me-2 text-primary"></i>
+                Dashboard
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-dark {% if request.path == '/statistique/' %}active-link{% endif %}" 
+               href="{% url 'statistique-utilisateur' %}">
+                <i class="bi bi-bar-chart-line me-2 text-primary"></i>
+                Statistiques
+            </a>
+        </li>
         {% endif %}
-    </li>
 
-    {% if user.role in 'admin rh' %}
-    <li class="nav-item mt-3">
-        <hr>
-        <span class="nav-link disabled text-uppercase text-muted small">Espace RH</span>
-    </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-dark {% if request.path == '/documents/' %}active-link{% endif %}" 
+               href="{% url 'document-list' %}">
+                <i class="bi bi-folder me-2 text-primary"></i>
+                Documents
+            </a>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link {% if request.path == '/dashboard-rh/' %}active{% endif %}" href="{% url 'dashboard-rh' %}">
-            📊 Dashboard RH
-        </a>
-    </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-dark {% if request.path == '/notes/' %}active-link{% endif %}" 
+               href="{% url 'inbox' %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-envelope me-2 text-primary"></i>
+                        Messagerie
+                    </div>
+                    {% if notes_non_lues > 0 %}
+                    <span class="badge bg-warning rounded-pill text-white">{{ notes_non_lues }}</span>
+                    {% endif %}
+                </div>
+            </a>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link {% if request.path == '/liste-modeles-fiches/' %}active{% endif %}" href="{% url 'liste-modeles-fiches' %}">
-           📋 Liste des modèles 
-        </a>
-    </li>
-    {% endif %}
+        {% if user.role in 'admin rh' %}
+        <li class="nav-item mt-4 mb-2">
+            <div class="text-uppercase small text-muted px-2">
+                <i class="bi bi-shield-lock me-1"></i>
+                Espace RH
+            </div>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link {% if request.path == '/profil/' %}active{% endif %}" href="{% url 'mon-profil' %}">
-            👤 Mon Profil
-        </a>
-    </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-dark {% if request.path == '/dashboard-rh/' %}active-link{% endif %}" 
+               href="{% url 'dashboard-rh' %}">
+                <i class="bi bi-clipboard-data me-2 text-primary"></i>
+                Dashboard RH
+            </a>
+        </li>
 
-    <li class="nav-item mt-4">
-        <a class="nav-link text-danger" href="{% url 'logout' %}">
-            🚪 Déconnexion
-        </a>
-    </li>
-</ul>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-dark {% if request.path == '/liste-modeles-fiches/' %}active-link{% endif %}" 
+               href="{% url 'liste-modeles-fiches' %}">
+                <i class="bi bi-file-earmark-text me-2 text-primary"></i>
+                Modèles
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+
+    <!-- Menu bas -->
+    <div class="p-3 border-top">
+        <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+                <a class="nav-link text-dark {% if request.path == '/profil/' %}active-link{% endif %}" 
+                   href="{% url 'mon-profil' %}">
+                    <i class="bi bi-person-circle me-2 text-primary"></i>
+                    Mon Profil
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-warning" href="{% url 'logout' %}">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    Déconnexion
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    .sidebar-container {
+        box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    }
+    
+    .nav-link {
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s;
+    }
+    
+    .nav-link:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .active-link {
+        background-color: #e7f1ff;
+        border-left: 3px solid #0d6efd;
+        font-weight: 500;
+    }
+    
+    .text-warning {
+        color: #fd7e14 !important;
+    }
+</style>

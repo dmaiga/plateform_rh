@@ -50,7 +50,7 @@
                 <thead class="bg-light">
                     <tr>
                         {% for jour in jours %}
-                            <th class="py-3 {% if jour|date:"D" == 'now'|date:"D" %}bg-primary text-white{% endif %}">
+                            <th class="py-2 {% if jour|date:"D" == 'now'|date:"D" %}bg-primary text-white{% endif %}">
                                 {{ jour|date:"l" }}<br>
                                 <span class="badge {% if jour|date:"D" == 'now'|date:"D" %}bg-white text-primary{% else %}bg-secondary{% endif %} rounded-pill">
                                     {{ jour|date:"d" }}
@@ -62,7 +62,7 @@
                 <tbody>
                     <tr>
                         {% for jour in jours %}
-                            <td class="p-2" style="min-width: 150px; height: 120px;">
+                            <td class="p-1" style="min-width: 150px; height: 120px;">
                                 <div class="h-100 d-flex flex-column">
                                     {% with liste=taches_par_jour|get_item:jour %}
                                         {% if liste %}

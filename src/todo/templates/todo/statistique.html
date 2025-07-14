@@ -1,0 +1,133 @@
+{% extends 'authentication/base.html' %}
+{% load static todo_extras %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="mb-4">📊 Tableau de bord statistique</h2>
+            
+            <!-- Statistiques du jour -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Statistiques du jour</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card bg-light p-3 rounded">
+                                <h6 class="text-muted">Total tâches</h6>
+                                <h4>{{ total }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card bg-light p-3 rounded">
+                                <h6 class="text-muted">Terminées</h6>
+                                <h4 class="text-success">{{ terminees }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card bg-light p-3 rounded">
+                                <h6 class="text-muted">En cours</h6>
+                                <h4 class="text-warning">{{ en_cours }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="stat-card bg-light p-3 rounded">
+                                <h6 class="text-muted">Temps total</h6>
+                                <h4>{{ duree_totale|format_timedelta }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-card bg-light p-3 rounded">
+                                <h6 class="text-muted">Moyenne/tâche</h6>
+                                <h4>{{ moyenne_tache|format_timedelta }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historique récent -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🧾 Tâches récentes</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tâche</th>
+                                    <th>État</th>
+                                    <th>Durée</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ligne in historique %}
+                                <tr>
+                                    <td>{{ ligne.titre }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if ligne.etat == 'Terminée' %}success{% elif ligne.etat == 'En cours' %}warning{% else %}secondary{% endif %}">
+                                            {{ ligne.etat }}
+                                        </span>
+                                    </td>
+                                    <td>{{ ligne.duree|format_timedelta }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sélecteur de mois -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📅 Consultation par mois</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'historique_par_mois' %}">
+                        <div class="mb-3">
+                            <label for="mois" class="form-label">Mois</label>
+                            <select name="mois" id="mois" class="form-select">
+                                {% for num, nom in mois_fr %}
+                                    <option value="{{ num }}" {% if current_month == num %}selected{% endif %}>{{ nom }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="annee" class="form-label">Année</label>
+                            <select name="annee" id="annee" class="form-select">
+                                {% for annee in annees %}
+                                    <option value="{{ annee }}" {% if current_year == annee %}selected{% endif %}>{{ annee }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-calendar-week"></i> Afficher l'historique
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-card {
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .table th {
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}

@@ -32,16 +32,7 @@ class Tache(models.Model):
     jour_prevu = models.PositiveIntegerField(null=True, blank=True)
     commentaire_rh = models.TextField(blank=True)
 
-    # Suivi d'état
-    is_started = models.BooleanField(default=False)
-    is_paused = models.BooleanField(default=False)
-    is_done = models.BooleanField(default=False)
 
-    start_time = models.DateTimeField(null=True, blank=True)
-    pause_time = models.DateTimeField(null=True, blank=True)
-    end_time = models.DateTimeField(null=True, blank=True)
-
-    duree_total = models.DurationField(null=True, blank=True)
     
     def calculer_duree(self):
         """Calcule la durée en tenant compte des timezones"""
@@ -61,16 +52,7 @@ class Tache(models.Model):
 
     def __str__(self):
         return self.titre
-    # Dans models.py > Tache
-    @property
-    def etat_courant(self):
-        if self.is_done:
-            return "terminée"
-        elif self.is_paused:
-            return "en pause"
-        elif self.is_started:
-            return "en cours"
-        return "non démarrée"
+
 
 
 class TacheSelectionnee(models.Model):
@@ -90,12 +72,16 @@ class TacheSelectionnee(models.Model):
             return timezone.now() - self.pause_time
         return timedelta(0)
     def duree_active(self):
-        # Somme des suivis de la tâche pour l'user et date (optionnel, si tu veux)
-        suivis = SuiviTache.objects.filter(tache=self.tache, user=self.user)
+        suivis = SuiviTache.objects.filter(
+            tache=self.tache,
+            user=self.user,
+            start_time__date=self.date_selection 
+        )
         total = timedelta()
         for s in suivis:
             total += s.duree()
         return total
+
     
     @property
     def duree_active_affichee(self):
@@ -104,6 +90,25 @@ class TacheSelectionnee(models.Model):
         minutes, secondes = divmod(reste, 60)
         return f"{heures:02d}:{minutes:02d}:{secondes:02d}"
     
+    @property
+    def etat_courant(self):
+        if self.is_done:
+            return "Terminée"
+        elif self.is_paused:
+            return "En pause"
+        elif self.is_started:
+            return "En cours"
+        return "Non démarrée"
+    
+    def calculer_duree(self):
+        """Calcule la durée en tenant compte des timezones"""
+        if not self.start_time:
+            return timedelta(0)
+            
+        if self.end_time:
+            return self.end_time - self.start_time
+            
+        return timezone.now() - self.start_time
     def __str__(self):
         return f"{self.user.username} - {self.tache.titre} ({self.date_selection})"
 

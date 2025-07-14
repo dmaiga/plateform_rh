@@ -1,0 +1,55 @@
+{% load static todo_extras %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: #2d3748; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f7fafc; }
+    </style>
+</head>
+<body>
+<h1>Statistiques mensuelles - {% if mois == 'Tous' or not mois %}Tous les mois{% else %}{{ mois }}{% endif %}</h1>
+<h1> {{ user.first_name|upper }} {{ user.last_name|upper }}</h1>
+<p>Poste : {{ user.poste_occupe }}</p>
+<p>Téléphone pro : {{ user.telephone_pro }}</p>
+<p>Statut : {{ user.statut }}</p>
+<p> Email: {{user.email}}</p>
+
+    {% for mois, taches in historique.items %}
+        <h2>{{ mois }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>État</th>
+                    <th>Durée (min)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in taches %}
+                    <tr>
+                        <td>{{ t.tache.titre }}</td>
+                        <td>
+                            {% if t.is_done %}
+                                Terminée
+                            {% elif t.is_paused %}
+                                En pause
+                            {% elif t.is_started %}
+                                En cours
+                            {% else %}
+                                Non démarrée
+                            {% endif %}
+                        </td>
+<td>{{ t.duree_active|format_timedelta }}</td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+</body>
+</html>

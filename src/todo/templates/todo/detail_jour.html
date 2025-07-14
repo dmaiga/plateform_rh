@@ -1,0 +1,20 @@
+{% extends "authentication/base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Détails du {{ date|date:"l d F Y" }}</h2>
+    <ul>
+      {% for sel in taches_jour %}
+        <li>
+          {{ sel.tache.titre }} — 
+          {% if sel.is_done %} ✅ Terminée
+          {% elif sel.is_paused %} ⏸️ En pause
+          {% elif sel.is_started %} ▶️ En cours
+          {% else %} 🔒 Non démarrée
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="javascript:history.back()">← Retour</a>
+  </div>
+{% endblock %}

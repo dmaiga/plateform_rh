@@ -38,6 +38,7 @@
     </form>
 </div>
 
+
 <script>
     const dateInput = document.getElementById("date_selection");
     const display = document.getElementById("affichage-date");
@@ -49,6 +50,12 @@
 
     dateInput.addEventListener("input", () => {
         display.textContent = formaterDateFr(dateInput.value);
+
+        // Ajout : rediriger automatiquement en GET vers la nouvelle date
+        const selectedDate = dateInput.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set("date", selectedDate);
+        window.location.href = url.toString();
     });
 </script>
 

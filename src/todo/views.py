@@ -171,11 +171,13 @@ def changer_etat_tache_selectionnee(request, sel_id):
             autres = TacheSelectionnee.objects.filter(
                 user=request.user,
                 is_started=True,
+                
                 is_paused=False
             ).exclude(id=selection.id)
 
             for autre in autres:
                 autre.is_paused = True
+                autre.is_started = False
                 autre.save()
 
                 suivi = SuiviTache.objects.filter(
@@ -227,18 +229,18 @@ def changer_etat_tache_selectionnee(request, sel_id):
                 selection.pause_time = None
                 selection.end_time = now
                 selection.save()
-        
+
                 # Fermer un suivi en cours s’il y en a (rare dans ce cas précis)
                 suivi = SuiviTache.objects.filter(
                     tache=selection.tache,
                     user=request.user,
                     end_time__isnull=True
                 ).last()
-        
+
                 if suivi:
                     suivi.end_time = now
                     suivi.save()
-        
+
                 # Calcule de la durée réelle (somme des suivis)
                 total = timedelta()
                 for s in SuiviTache.objects.filter(
@@ -246,10 +248,10 @@ def changer_etat_tache_selectionnee(request, sel_id):
                     user=request.user
                 ):
                     total += s.duree()
-        
+
                 selection.tache.duree_total = total
                 selection.tache.end_time = now
                 selection.tache.save()
-        
+
 
     return redirect("dashboard")

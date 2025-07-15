@@ -1,0 +1,114 @@
+{% load statics_extras %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ccc; padding: 6px; vertical-align: top; }
+        th { background-color: #f0f0f0; }
+        .text-muted { color: #777; font-size: 11px; }
+        .small { font-size: 11px; }
+         body {
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .infos-utilisateur h1 {
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .note-pourcentage {
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+
+        .note-rouge {
+            color: #dc3545;
+        }
+
+        .note-orange {
+            color: #ffc107;
+        }
+
+        .note-verte {
+            color: #28a745;}
+    </style>
+</head>
+<body>
+         <div class="header">
+        <div class="infos-utilisateur">
+            <h1>Détail de la journée du {{ date|date:"l d F Y" }}</h1>
+            <p><strong>Nom :</strong> {{ user.first_name }} {{ user.last_name }}</p>
+            <p><strong>Poste :</strong> {{ user.poste_occupe }}</p>
+            <p><strong>Email :</strong> {{ user.email }}</p>
+            <p><strong>Téléphone pro :</strong> {{ user.telephone_pro }}</p>
+            
+        </div>
+
+<p class="note-pourcentage
+    {% if pourcentage < 60 %}
+        note-rouge
+    {% elif pourcentage < 80 %}
+        note-orange
+    {% else %}
+        note-verte
+    {% endif %}
+">
+    Pourcentage global : {{ pourcentage }}% — {{ appreciation }}
+</p>
+
+                
+            </p>
+        </div>
+    </div>
+
+    <h2 style="margin-top: 30px;">Tâches réalisées</h2>
+
+
+{% for date, taches in historique.items %}
+    <h2>{{ date|date:"l d F Y" }}</h2>
+    <p><strong>📊 Pourcentage du jour :</strong> {{ pourcentages_journaliers|get_item:date }}%</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tâche</th>
+                <th>Statut</th>
+                <th>Durée</th>
+                <th>Commentaires</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in taches %}
+            <tr>
+                <td>{{ t.tache.titre }}</td>
+                <td>
+                    {% if t.is_done %} Terminée
+                    {% elif t.is_started %} En cours
+                    {% elif t.is_paused %} En pause
+                    {% else %} Non démarrée
+                    {% endif %}
+                </td>
+                <td>{{ t.duree_active|format_timedelta }}</td>
+                <td>
+                    {% if t.commentaire_rh %}<div><strong>RH :</strong> {{ t.commentaire_rh }}</div>{% endif %}
+                    {% if t.tache.commentaire_rh %}<div><strong>RH général :</strong> {{ t.tache.commentaire_rh }}</div>{% endif %}
+                    {% if t.commentaire_employe %}<div><strong>Employé :</strong> {{ t.commentaire_employe }}</div>{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endfor %}
+    </body>
+</html>

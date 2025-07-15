@@ -67,6 +67,9 @@ class TacheSelectionnee(models.Model):
     end_time = models.DateTimeField(null=True, blank=True)
     pause_time = models.DateTimeField(null=True, blank=True)
     
+    commentaire_rh = models.TextField(blank=True, null=True)  
+    commentaire_employe = models.TextField(blank=True, null=True) 
+     
     def duree_pause_en_cours(self):
         if self.is_paused and self.pause_time:
             return timezone.now() - self.pause_time

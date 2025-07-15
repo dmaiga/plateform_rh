@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'notes',
     'channels',
     'todo',
+    'statics',
     
 ]
 

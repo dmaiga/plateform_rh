@@ -9,13 +9,13 @@ from .models import Tache, TacheSelectionnee, FichePoste, SuiviTache
 from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_POST
 from collections import defaultdict
-from calendar import day_name
+from calendar import monthrange,day_name
 from django.db import transaction
 from django.utils.timezone import localdate
 
 from django.utils.timezone import now
 from calendar import monthrange
-from django.db.models import Count, Q
+from django.db.models import Count, Q,Sum
 
 from django.db.models.functions import TruncMonth, TruncDate
 import csv
@@ -25,158 +25,8 @@ from django.template.loader import render_to_string
 
 from xhtml2pdf import pisa  
 
-@login_required
-def export_statistiques(request, format, mois=None):
-    user = request.user
-
-    # Données déjà calculées dans historique_mensuel
-    taches = (
-        TacheSelectionnee.objects
-        .filter(user=user)
-        .select_related('tache')
-        .annotate(month=TruncMonth("date_selection"))
-    )
-
-    historique = defaultdict(list)
-
-    for t in taches:
-        month_key = t.date_selection.strftime("%Y-%m")
-        if not mois or month_key == mois:
-            historique[month_key].append(t)
-
-    if format == 'csv':
-        # --- CSV ---
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="statistiques_{mois or "tous"}.csv"'
-        writer = csv.writer(response)
-        writer.writerow(['Mois', 'Titre', 'État', 'Durée active (min)'])
-
-        for m, taches_mois in historique.items():
-            for t in taches_mois:
-                if t.is_done:
-                    etat = "Terminée"
-                elif t.is_paused:
-                    etat = "En pause"
-                elif t.is_started:
-                    etat = "En cours"
-                else:
-                    etat = "Non démarrée"
-                writer.writerow([m, t.tache.titre, etat, round(t.duree_active().total_seconds() / 60, 2)])
-
-        return response
-
-    elif format == 'pdf':
-        # --- PDF ---
-        html = render_to_string("todo/pdf_export.html", {
-            'historique': dict(historique),
-            'mois': mois or "Tous",
-            'user': user,
-        })
-
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="statistiques_{mois or "tous"}.pdf"'
-
-        pisa_status = pisa.CreatePDF(BytesIO(html.encode('utf-8')), dest=response)
-        if pisa_status.err:
-            return HttpResponse("Erreur de génération PDF", status=500)
-        return response
-
-    else:
-        return HttpResponse("Format non supporté", status=400)
 
 
-
-from collections import defaultdict
-from django.db.models.functions import TruncMonth, TruncDate
-from django.utils.timezone import now
-from datetime import timedelta
-
-@login_required
-def statistique_globale(request):
-    user = request.user
-    today = now().date()
-
-    # --- Statistiques du jour ---
-    taches_auj = TacheSelectionnee.objects.filter(user=user, date_selection=today)
-    total_selectionnees = taches_auj.count()
-    terminees = taches_auj.filter(is_done=True).count()
-    en_cours = taches_auj.filter(is_started=True, is_paused=False, is_done=False).count()
-    en_pause = taches_auj.filter(is_paused=True, is_done=False).count()
-    non_demarre = taches_auj.filter(is_started=False, is_paused=False, is_done=False).count()
-
-    duree_totale = sum((s.duree() for s in SuiviTache.objects.filter(user=user, start_time__date=today)), timedelta())
-    moyenne_par_tache = duree_totale / total_selectionnees if total_selectionnees > 0 else timedelta()
-
-    historique_jour = []
-    for sel in taches_auj:
-        if sel.is_done:
-            etat = "Terminée"
-        elif sel.is_paused:
-            etat = "En pause"
-        elif sel.is_started:
-            etat = "En cours"
-        else:
-            etat = "Non démarrée"
-        
-        historique_jour.append({
-            'titre': sel.tache.titre,
-            'etat': etat,
-            'duree': sel.duree_active(),
-        })
-
-    # --- Historique mensuel ---
-    taches = (
-        TacheSelectionnee.objects
-        .filter(user=user)
-        .select_related('tache')
-        .annotate(month=TruncMonth("date_selection"))
-        .order_by("-date_selection")
-    )
-
-    historique = defaultdict(list)
-    stats_par_mois = {}
-
-    for t in taches:
-        mois = t.date_selection.strftime("%Y-%m")
-        historique[mois].append(t)
-
-    for mois, taches_mois in historique.items():
-        total = len(taches_mois)
-        terminees = sum(1 for t in taches_mois if t.is_done)
-        en_pause = sum(1 for t in taches_mois if t.is_paused and not t.is_done)
-        en_cours = sum(1 for t in taches_mois if t.is_started and not t.is_paused and not t.is_done)
-        non_demarre = sum(1 for t in taches_mois if not t.is_started and not t.is_done)
-
-        duree_total = sum((t.duree_active() for t in taches_mois), timedelta())
-
-        stats_par_mois[mois] = {
-            'total': total,
-            'terminees': terminees,
-            'en_pause': en_pause,
-            'en_cours': en_cours,
-            'non_demarre': non_demarre,
-            'duree_totale': duree_total,
-        }
-
-    context = {
-        # stats jour
-        'total': total_selectionnees,
-        'terminees': terminees,
-        'en_cours': en_cours,
-        'en_pause': en_pause,
-        'non_demarre': non_demarre,
-        'duree_totale': duree_totale,
-        'moyenne_tache': moyenne_par_tache,
-        'historique': historique_jour,
-
-        # historique mensuel
-        'stats_par_mois': stats_par_mois,
-        'historique_grouped': historique,
-        'mois_disponibles': sorted(historique.keys(), reverse=True),
-        'mois_selectionne': request.GET.get("mois")
-    }
-
-    return render(request, 'todo/statistique.html', context)
 
 
 
@@ -423,9 +273,10 @@ def changer_etat_tache_selectionnee(request, sel_id):
 
 
     return redirect("dashboard")
-from django.db.models import Count, Sum
-from datetime import datetime, timedelta
-from calendar import monthrange
+
+
+
+
 @login_required
 def historique_par_mois(request):
     # Liste des mois en français pour le template
@@ -554,3 +405,154 @@ def historique_jour(request, date_str):
         'duree_moyenne': moyenne,
     }
     return render(request, 'todo/historique_jour.html', context)
+
+@login_required
+def export_statistiques(request, format, mois=None):
+    user = request.user
+
+    # Données déjà calculées dans historique_mensuel
+    taches = (
+        TacheSelectionnee.objects
+        .filter(user=user)
+        .select_related('tache')
+        .annotate(month=TruncMonth("date_selection"))
+    )
+
+    historique = defaultdict(list)
+
+    for t in taches:
+        month_key = t.date_selection.strftime("%Y-%m")
+        if not mois or month_key == mois:
+            historique[month_key].append(t)
+
+    if format == 'csv':
+        # --- CSV ---
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="statistiques_{mois or "tous"}.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Mois', 'Titre', 'État', 'Durée active (min)'])
+
+        for m, taches_mois in historique.items():
+            for t in taches_mois:
+                if t.is_done:
+                    etat = "Terminée"
+                elif t.is_paused:
+                    etat = "En pause"
+                elif t.is_started:
+                    etat = "En cours"
+                else:
+                    etat = "Non démarrée"
+                writer.writerow([m, t.tache.titre, etat, round(t.duree_active().total_seconds() / 60, 2)])
+
+        return response
+
+    elif format == 'pdf':
+        # --- PDF ---
+        html = render_to_string("todo/pdf_export.html", {
+            'historique': dict(historique),
+            'mois': mois or "Tous",
+            'user': user,
+        })
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="statistiques_{mois or "tous"}.pdf"'
+
+        pisa_status = pisa.CreatePDF(BytesIO(html.encode('utf-8')), dest=response)
+        if pisa_status.err:
+            return HttpResponse("Erreur de génération PDF", status=500)
+        return response
+
+    else:
+        return HttpResponse("Format non supporté", status=400)
+
+
+
+
+
+@login_required
+def statistique_globale(request):
+    user = request.user
+    today = now().date()
+
+    # --- Statistiques du jour ---
+    taches_auj = TacheSelectionnee.objects.filter(user=user, date_selection=today)
+    total_selectionnees = taches_auj.count()
+    terminees = taches_auj.filter(is_done=True).count()
+    en_cours = taches_auj.filter(is_started=True, is_paused=False, is_done=False).count()
+    en_pause = taches_auj.filter(is_paused=True, is_done=False).count()
+    non_demarre = taches_auj.filter(is_started=False, is_paused=False, is_done=False).count()
+
+    duree_totale = sum((s.duree() for s in SuiviTache.objects.filter(user=user, start_time__date=today)), timedelta())
+    moyenne_par_tache = duree_totale / total_selectionnees if total_selectionnees > 0 else timedelta()
+
+    historique_jour = []
+    for sel in taches_auj:
+        if sel.is_done:
+            etat = "Terminée"
+        elif sel.is_paused:
+            etat = "En pause"
+        elif sel.is_started:
+            etat = "En cours"
+        else:
+            etat = "Non démarrée"
+        
+        historique_jour.append({
+            'titre': sel.tache.titre,
+            'etat': etat,
+            'duree': sel.duree_active(),
+        })
+
+    # --- Historique mensuel ---
+    taches = (
+        TacheSelectionnee.objects
+        .filter(user=user)
+        .select_related('tache')
+        .annotate(month=TruncMonth("date_selection"))
+        .order_by("-date_selection")
+    )
+
+    historique = defaultdict(list)
+    stats_par_mois = {}
+
+    for t in taches:
+        mois = t.date_selection.strftime("%Y-%m")
+        historique[mois].append(t)
+
+    for mois, taches_mois in historique.items():
+        total = len(taches_mois)
+        terminees = sum(1 for t in taches_mois if t.is_done)
+        en_pause = sum(1 for t in taches_mois if t.is_paused and not t.is_done)
+        en_cours = sum(1 for t in taches_mois if t.is_started and not t.is_paused and not t.is_done)
+        non_demarre = sum(1 for t in taches_mois if not t.is_started and not t.is_done)
+
+        duree_total = sum((t.duree_active() for t in taches_mois), timedelta())
+
+        stats_par_mois[mois] = {
+            'total': total,
+            'terminees': terminees,
+            'en_pause': en_pause,
+            'en_cours': en_cours,
+            'non_demarre': non_demarre,
+            'duree_totale': duree_total,
+        }
+
+    context = {
+        # stats jour
+        'total': total_selectionnees,
+        'terminees': terminees,
+        'en_cours': en_cours,
+        'en_pause': en_pause,
+        'non_demarre': non_demarre,
+        'duree_totale': duree_totale,
+        'moyenne_tache': moyenne_par_tache,
+        'historique': historique_jour,
+
+        # historique mensuel
+        'stats_par_mois': stats_par_mois,
+        'historique_grouped': historique,
+        'mois_disponibles': sorted(historique.keys(), reverse=True),
+        'mois_selectionne': request.GET.get("mois")
+    }
+
+    return render(request, 'todo/statistique.html', context)
+

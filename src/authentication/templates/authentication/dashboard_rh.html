@@ -1,51 +1,174 @@
 {% extends 'authentication/base.html' %}
+{% load static %}
+
 {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dashboard RH</title>
+</head>
+<style>
+:root {
+    --color-excellent: #4caf50;
+    --color-good: #8bc34a;
+    --color-average: #ffc107;
+    --color-poor: #f44336;
+    --color-no-data: #f5f5f5;
+}
 
-<div class="d-flex justify-content-between align-items-center mb-4" style="margin-top: 2em;">
-    <h2 class="mb-0">Dashboard RH</h2>
-    <a class="btn btn-primary" href="{% url 'create-user' %}">➕ Créer un utilisateur</a>
-</div>
+.dashboard-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
 
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
 
+.performance-grid {
+    display: grid;
+    grid-template-columns: 200px repeat(5, 1fr) 100px;
+    gap: 1px;
+    background: #e0e0e0;
+}
 
-<form method="get" class="mb-4">
-    <div class="input-group">
-        <input type="text" name="q" class="form-control" placeholder="Rechercher..." value="{{ query }}">
-        <button class="btn btn-outline-secondary" type="submit">🔍</button>
-    </div>
-</form>
+.grid-header, .grid-row {
+    display: contents;
+}
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for user in users %}
-    <div class="col">
-        <div class="card h-100 shadow-sm border-0">
-            {% if user.photo %}
-                <img src="{{ user.photo.url }}" class="card-img-top img-fluid" style="height: 200px; object-fit: cover;" alt="Photo de {{ user.get_full_name }}">
-            {% else %}
-                <img src="https://via.placeholder.com/300x200.png?text=Sans+Photo" class="card-img-top img-fluid" alt="Pas de photo">
-            {% endif %}
-            <div class="card-body">
-                <h5 class="card-title mb-1">{{ user.get_full_name |upper }}</h5>
-                <h6 class="card-subtitle text-muted mb-2">@{{ user.username| upper }}</h6>
+.grid-header > div {
+    background: #263238;
+    color: white;
+    padding: 1rem;
+    font-weight: 600;
+    text-align: center;
+}
 
-                <p class="mb-2">
-                    <strong>Rôle :</strong> <span class="badge bg-primary">{{ user.role }}</span><br>
-                    <strong>Statut :</strong> <span class="badge bg-info text-dark">{{ user.statut }}</span><br>
-                    <strong>Téléphone :</strong> {{ user.telephone_pro }}
-                </p>
+.employee-col, .day-col, .avg-col {
+    background: white;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
-                <div class="d-flex gap-2">
-                    <a href="{% url 'user-detail' %}?id={{ user.id }}" class="btn btn-sm btn-outline-primary">👁 Voir</a>
-                    <a href="{% url 'edit-user-rh' user.id %}" class="btn btn-sm btn-outline-warning">✏️ Modifier</a>
-                </div>
-            </div>
+.day-col {
+    position: relative;
+    text-align: center;
+    min-height: 60px;
+}
+
+.percentage-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    width: var(--percentage);
+}
+
+.percentage-value {
+    position: relative;
+    z-index: 1;
+}
+
+.no-data {
+    color: #9e9e9e;
+}
+
+/* Couleurs de performance */
+.excellent { color: var(--color-excellent); }
+.good { color: var(--color-good); }
+.average { color: var(--color-average); }
+.poor { color: var(--color-poor); }
+.no-data { background: var(--color-no-data); }
+
+.avg-col {
+    font-weight: 600;
+    align-items: center;
+}
+
+.trend-icon {
+    margin-left: 0.5rem;
+    font-size: 1.2em;
+}
+
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+</style>
+<body>
+    
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Performance Hebdomadaire</h1>
+        <div class="week-nav">
+            <span class="current-week">{{ week_range }}</span>
         </div>
     </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="alert alert-info">Aucun utilisateur trouvé.</div>
+
+    <div class="performance-grid">
+        <div class="grid-header">
+            <div class="employee-col">Employé</div>
+            {% for day in week_days %}
+                <div class="day-col">{{ day|date:"D d"|upper }}</div>
+            {% endfor %}
+            <div class="avg-col">Moyenne</div>
+        </div>
+
+        {% for user in stats %}
+        <div class="grid-row">
+            <div class="employee-col">
+                <div class="employee-name">{{ user.user.get_full_name }}</div>
+            </div>
+            
+            {% for day in user.days %}
+                <div class="day-col {{ day.css_class }}" data-tooltip="{{ day.tasks }} tâches">
+                    {% if day.percentage is not None %}
+                        <div class="percentage-bar" style="--percentage: {{ day.percentage }}%"></div>
+                        <span class="percentage-value">{{ day.percentage }}%</span>
+                    {% else %}
+                        <span class="no-data">-</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <div class="avg-col {{ user.weekly_class }}">
+                {{ user.weekly_avg }}%
+                {% if user.trend == 'up' %}
+                    <span class="trend-icon">↑</span>
+                {% elif user.trend == 'down' %}
+                    <span class="trend-icon">↓</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
+</body>
+</html>
 {% endblock %}

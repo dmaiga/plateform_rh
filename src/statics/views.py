@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 from datetime import date, timedelta,datetime
 import json
@@ -11,8 +10,7 @@ from collections import defaultdict
 from calendar import monthrange,day_name
 from django.db import transaction
 from django.utils.timezone import localdate,now
-
-
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count, Q,Sum
 from django.db.models.functions import TruncMonth, TruncDate
 import csv
@@ -20,6 +18,14 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from xhtml2pdf import pisa  
+from authentication.models import User
+from django.contrib.auth import login, authenticate ,logout
+
+
+def is_rh_or_admin(user):
+    return user.is_authenticated and getattr(user, 'role', None) in ['admin', 'rh']
+
+
 
 JOURS_FR = {
     'Monday': 'Lundi',
@@ -33,6 +39,17 @@ JOURS_FR = {
 
 @login_required
 def historique_par_mois(request):
+    user_id = request.GET.get('user_id')
+    is_rh_view = (
+     user_id
+     and str(request.user.id) != str(user_id)
+     and is_rh_or_admin(request.user) )
+
+    if user_id:
+        user = get_object_or_404(User, id=user_id)
+    else:
+        user = request.user
+
     # Validation des paramètres
     mois = request.GET.get('mois')
     annee = request.GET.get('annee')
@@ -57,7 +74,7 @@ def historique_par_mois(request):
         # Ne traiter que les jours de semaine (0=lundi, 4=vendredi)
         if current_date.weekday() < 5:  # 0-4 correspond à lundi-vendredi
             taches_jour = TacheSelectionnee.objects.filter(
-                user=request.user,
+                user=user,
                 date_selection=current_date
             )
             
@@ -140,26 +157,37 @@ def historique_par_mois(request):
         'mois_nom': mois_noms.get(mois, ""),
         'annee_selected': annee,
         'semaines': semaines,
+        'user_display_name': user.get_full_name() or user.username ,
+        'is_rh_view': is_rh_view,
     }
     return render(request, 'statics/historique_mois.html', context)
+
 @login_required
 def historique_jour(request, date_str):
     date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+    user_id = request.GET.get('user_id')
+    is_rh_view = (
+     user_id
+     and str(request.user.id) != str(user_id)
+     and is_rh_or_admin(request.user) )
     
+    if user_id:
+        user = get_object_or_404(User, id=user_id)
+    else:
+        user = request.user
     # Récupérer les tâches
     taches = TacheSelectionnee.objects.filter(
-        user=request.user,
+        user=user,
         date_selection=date_obj
     ).select_related('tache')
     
     # Calcul des statistiques
     total = taches.count()
     terminees = taches.filter(is_done=True).count()
-    
     pourcentage = round((terminees / total) * 100) if total else 0
     # Calcul du temps total et moyen
     suivis = SuiviTache.objects.filter(
-        user=request.user,
+        user=user,
         start_time__date=date_obj
     )
     
@@ -168,6 +196,7 @@ def historique_jour(request, date_str):
     
     context = {
         'date': date_obj,
+        'user_display_name': user.get_full_name() or user.username,
         'taches': taches,
         'total': total,
         'terminees': terminees,
@@ -175,7 +204,8 @@ def historique_jour(request, date_str):
         'duree_moyenne': moyenne,
         'jour': {
         'pourcentage': pourcentage
-         }
+         },
+        'is_rh_view': is_rh_view,
     }
     return render(request, 'statics/historique_jour.html', context)
 
@@ -266,7 +296,7 @@ def statistique_globale(request):
     return render(request, 'statics/statistique.html', context)
 
 
-from io import BytesIO
+
 @login_required
 def export_semaine(request, format, start_date_str):
     user = request.user

@@ -1,12 +1,304 @@
 {% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --secondary-color: #858796;
+        --success-color: #1cc88a;
+        --info-color: #36b9cc;
+    }
+    
+    .nav-tabs .nav-link {
+        color: var(--secondary-color);
+        border: none;
+        padding: 0.75rem 1.25rem;
+    }
+    .nav-tabs .nav-link.active {
+        color: var(--primary-color);
+        font-weight: 600;
+        border-bottom: 3px solid var(--primary-color);
+        background: transparent;
+    }
+    .form-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        margin-bottom: 1.5rem;
+        border: 1px solid #e3e6f0;
+    }
+    .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.75rem;
+        margin: 0.25rem;
+        border-radius: 50rem;
+        font-size: 0.85rem;
+        background-color: #f8f9fc;
+        border: 1px solid #d1d3e2;
+    }
+    .skill-tag .remove-skill {
+        color: #b7b9cc;
+        margin-left: 0.5rem;
+        cursor: pointer;
+    }
+    .skill-tag .remove-skill:hover {
+        color: #e74a3b;
+    }
+    .section-title {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eaecf4;
+    }
+    .file-preview {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 0.35rem;
+        border: 1px solid #e3e6f0;
+        padding: 0.25rem;
+    }
+    .select2-container--bootstrap4 .select2-selection--multiple {
+        min-height: calc(1.5em + 1rem + 2px);
+        padding: 0.5rem 0.75rem;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #b7b9cc;
+    }
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .info-highlight {
+        background-color: #f8f9fa;
+        border-left: 3px solid var(--primary-color);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h2>Modifier les infos de {{ cible.get_full_name }}</h2>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h4 mb-0 text-gray-800">
+                <i class="fas fa-user-edit text-primary mr-2"></i>
+                Édition RH : {{ user_cible.get_full_name }}
+            </h2>
+            <p class="mb-0 text-muted small">ID: {{ user_cible.username }}</p>
+        </div>
+        <a href="{% url 'edit-user-rh' user_id=user_cible.id %}" class="btn btn-light btn-icon-split">
+            <span class="icon text-gray-600">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Retour au profil</span>
+        </a>
+    </div>
 
-<form method="post" class="card p-4 shadow mt-3">
-    {% csrf_token %}
-    {{ form.as_p }}
+    <div class="info-highlight">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-info-circle text-primary mr-3 fa-lg"></i>
+            <div>
+                <h5 class="mb-1">Informations clés</h5>
+                <p class="mb-0 small">
+                    Poste: <strong>{{ user_cible.poste_occupe|default:"Non renseigné" }}</strong> | 
+                    Département: <strong>{{ user_cible.department|default:"Non renseigné" }}</strong> | 
+                    Statut: <strong>{{ user_cible.get_statut_display|default:"Non renseigné" }}</strong>
+                </p>
+            </div>
+        </div>
+    </div>
 
-    <button class="btn btn-success">💾 Enregistrer</button>
-    <a href="{% url 'dashboard-rh' %}" class="btn btn-secondary">← Annuler</a>
-</form>
+    <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if active_tab == 'infos' %}active{% endif %}" 
+                    id="infos-tab" data-bs-toggle="tab" data-bs-target="#infos" 
+                    type="button" role="tab">
+                <i class="fas fa-info-circle mr-2"></i>Informations
+            </button>
+        </li>
+        {% if skills_page_obj.object_list %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if active_tab == 'competences' %}active{% endif %}" 
+                    id="competences-tab" data-bs-toggle="tab" data-bs-target="#competences" 
+                    type="button" role="tab">
+                <i class="fas fa-tasks mr-2"></i>Compétences
+            </button>
+        </li>
+        {% endif %}
+    </ul>
+
+    <form method="post" enctype="multipart/form-data" class="mb-4">
+        {% csrf_token %}
+        
+        <div class="tab-content" id="userTabsContent">
+            <!-- Onglet Informations -->
+            <div class="tab-pane fade {% if active_tab == 'infos' %}show active{% endif %}" 
+                 id="infos" role="tabpanel">
+                
+                <div class="form-card">
+                    <h4 class="section-title"><i class="fas fa-id-card mr-2"></i>Informations principales</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Rôle</label>
+                            {{ form.role }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Statut</label>
+                            {{ form.statut }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Poste occupé</label>
+                            {{ form.poste_occupe }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Département</label>
+                            {{ form.department }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h4 class="section-title"><i class="fas fa-calendar-alt mr-2"></i>Dates importantes</h4>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">Date d'embauche</label>
+                            {{ form.start_date }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">Date de fin</label>
+                            {{ form.end_date }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">Dernière évaluation</label>
+                            {{ form.last_evaluation }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h4 class="section-title"><i class="fas fa-file-contract mr-2"></i>Fiche de poste</h4>
+                    <div class="mb-3">
+                        {% if user_cible.fiche_poste %}
+                            <div class="alert alert-primary d-flex align-items-center">
+                                <i class="fas fa-file-alt fa-2x mr-3"></i>
+                                <div>
+                                    <h5 class="alert-heading mb-1">{{ user_cible.fiche_poste.titre }}</h5>
+                                    <p class="mb-2 small">{{ user_cible.fiche_poste.description|truncatechars:60 }}</p>
+                                    <a href="{% url 'detail-fiche-poste' user_cible.fiche_poste.id %}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye mr-1"></i> Consulter
+                                    </a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-file-excel text-gray-300"></i>
+                                <p class="mb-0">Aucune fiche de poste attribuée</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Compétences (seulement si l'utilisateur a des compétences) -->
+            {% if skills_page_obj.object_list %}
+            <div class="tab-pane fade {% if active_tab == 'competences' %}show active{% endif %}" 
+                 id="competences" role="tabpanel">
+                
+                <div class="form-card">
+                    <h4 class="section-title"><i class="fas fa-tasks mr-2"></i>Compétences</h4>
+                    
+                    <div class="mb-4">
+                        <label class="form-label font-weight-bold">Compétences actuelles</label>
+                        <div id="current-skills-container" class="d-flex flex-wrap mb-3">
+                            {% for skill in skills_page_obj %}
+                                <div class="skill-tag">
+                                    {{ skill.name }}
+                                    <a href="{% url 'remove-skill' user_id=user_cible.id skill_id=skill.id %}" 
+                                       class="remove-skill" title="Retirer cette compétence">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Ajouter des compétences</label>
+                        {{ form.skills_list }}
+                        <small class="form-text text-muted">Commencez à taper pour rechercher ou sélectionner</small>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white">
+                    <i class="fas fa-save"></i>
+                </span>
+                <span class="text">Enregistrer les modifications</span>
+            </button>
+            <div>
+                <a href="{% url 'edit-user-rh' user_id=user_cible.id %}" class="btn btn-light mr-2">
+                    <i class="fas fa-times mr-1"></i> Annuler
+                </a>
+                {% if active_tab == 'infos' and skills_page_obj.object_list %}
+                    <a href="?tab=competences" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-right mr-1"></i> Compétences
+                    </a>
+                {% elif active_tab == 'competences' %}
+                    <a href="?tab=infos" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left mr-1"></i> Informations
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Initialisation de Select2 avec thème Bootstrap
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        placeholder: "Rechercher des compétences...",
+        allowClear: true,
+        width: '100%'
+    });
+
+    // Confirmation avant suppression de compétence
+    $('.remove-skill').click(function(e) {
+        e.preventDefault();
+        if (confirm('Retirer cette compétence ?')) {
+            window.location.href = $(this).attr('href');
+        }
+    });
+
+    // Gestion des onglets avec persistance
+    $('a[data-toggle="tab"]').on('click', function(e) {
+        localStorage.setItem('activeTab', $(e.target).attr('href'));
+    });
+
+    var activeTab = localStorage.getItem('activeTab');
+    if (activeTab) {
+        $('#userTabs a[href="' + activeTab + '"]').tab('show');
+    }
+});
+</script>
 {% endblock %}

@@ -9,20 +9,84 @@ from django.urls import reverse
 from datetime import timedelta
 from . import forms 
 from .forms import CreateUserForm, PersonalUserUpdateForm, RHUserUpdateForm
-from .models import User
+from .models import User,Skill
 from logs.utils import enregistrer_action
-
-from todo.models import FichePoste, Tache,TacheSelectionnee  # importe les modèles du module todo
+from calendar import monthrange
+from todo.models import FichePoste, Tache,TacheSelectionnee   
 from datetime import date
 from .forms import FichePosteForm
 from django.utils import timezone
 
 from todo.views import get_planning_context
-
-
+from datetime import date, timedelta,datetime
+from django.core.paginator import Paginator
 
 def is_rh_or_admin(user):
     return user.is_authenticated and user.role in ['admin', 'rh']
+
+def get_performance_class(percentage):
+    if percentage is None:
+        return 'no-data'
+    if percentage >= 90:
+        return 'excellent'
+    if percentage >= 70:
+        return 'good'
+    if percentage >= 50:
+        return 'average'
+    return 'poor'
+
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def dashboard_rh(request):
+    users = User.objects.exclude(role='admin').order_by('last_name')
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    jours_semaine = [start_of_week + timedelta(days=i) for i in range(5)]  # Lundi à vendredi
+
+    stats = []
+    for user in users:
+        user_data = {
+            'user': user,
+            'days': [],
+            'weekly_avg': 0,
+            'trend': 'stable'
+        }
+        
+        daily_percentages = []
+        for day in jours_semaine:
+            tasks_done = TacheSelectionnee.objects.filter(
+                user=user, 
+                date_selection=day,
+                is_done=True
+            ).count()
+            
+            # Calcul du pourcentage basé sur l'objectif de 6 tâches
+            percentage = round((tasks_done / 6) * 100) if tasks_done <= 6 else 100
+            
+            day_data = {
+                'date': day,
+                'percentage': percentage,
+                'tasks': f"{tasks_done}/6",
+                'css_class': get_performance_class(percentage)
+            }
+            user_data['days'].append(day_data)
+            
+            daily_percentages.append(percentage)
+        
+        # Calcul de la moyenne hebdomadaire (somme des pourcentages / 5 jours)
+        user_data['weekly_avg'] = round(sum(daily_percentages) / 5)
+        user_data['weekly_class'] = get_performance_class(user_data['weekly_avg'])
+        
+        stats.append(user_data)
+
+    context = {
+        'stats': stats,
+        'week_days': jours_semaine,
+        'week_range': f"{start_of_week:%d/%m} - {(start_of_week + timedelta(days=4)):%d/%m}"
+    }
+    return render(request, 'authentication/dashboard_rh.html', context)
+
 
 @login_required
 @user_passes_test(is_rh_or_admin)
@@ -100,30 +164,56 @@ def ajouter_taches_modele(request, fiche_id):
 
     return render(request, 'authentication/ajouter_taches_modele.html', {'fiche': fiche})
 
+
 @login_required
 @user_passes_test(is_rh_or_admin)
-def dashboard_rh(request):
-    query = request.GET.get('q', '')
+def detail_fiche_poste(request, fiche_id):
+    fiche = get_object_or_404(FichePoste, id=fiche_id)
+    return render(request, 'authentication/detail_fiche_poste.html', {'fiche': fiche})
 
-    # On exclut les admins dès le départ
-    users = User.objects.exclude(role='admin')
+@login_required
+@user_passes_test(is_rh_or_admin)
+def employees_view(request):
+    query = request.GET.get('q', '')
+    department_filter = request.GET.get('department', '')
+    role_filter = request.GET.get('role', '')
+    statut_filter = request.GET.get('statut', '')
+
+    users = User.objects.exclude(role='admin').select_related('fiche_poste', 'manager')
 
     if query:
         users = users.filter(
             Q(username__icontains=query) |
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
-            Q(statut__icontains=query)
+            Q(poste_occupe__icontains=query) |
+            Q(ville__icontains=query)
         )
+    
+    if department_filter:
+        users = users.filter(department__iexact=department_filter)
+    
+    if role_filter:
+        users = users.filter(role__iexact=role_filter)
+    
+    if statut_filter:
+        users = users.filter(statut__iexact=statut_filter)
 
-    users = users.order_by('last_name')
+    users = users.order_by('first_name')
 
-    return render(request, 'authentication/dashboard_rh.html', {
+    # Pour les filtres
+    departments = User.objects.exclude(department='').values_list('department', flat=True).distinct()
+
+    return render(request, 'authentication/employees_view.html', {
         'users': users,
         'query': query,
+        'departments': departments,
+        'role_choices': User.ROLE_CHOICES,
+        'statut_choices': User.STATUT_CHOICES,
+        'selected_department': department_filter,
+        'selected_role': role_filter,
+        'selected_statut': statut_filter,
     })
-
-
 
 
 
@@ -268,25 +358,64 @@ def user_detail(request):
 
     return render(request, 'authentication/user_detail.html', {'user_cible': user_cible})
 
+
+
 @login_required
 @user_passes_test(is_rh_or_admin)
 def edit_user_rh(request, user_id):
-    user_cible = User.objects.filter(id=user_id).first()
-
-    if not user_cible:
-        messages.error(request, "❌ Utilisateur introuvable.")
-        return redirect('dashboard-rh')
+    user_cible = get_object_or_404(User, id=user_id)
+    form = RHUserUpdateForm(instance=user_cible)
+    skills = user_cible.skills.all()
+    
+    # Pagination pour les compétences
+    skill_paginator = Paginator(skills, 5)
+    skill_page = request.GET.get('skill_page')
+    skills_page_obj = skill_paginator.get_page(skill_page)
+    
+    # Pagination pour les fiches de poste disponibles
+    available_fiches = FichePoste.objects.all()
+    fiche_paginator = Paginator(available_fiches, 5)
+    fiche_page = request.GET.get('fiche_page')
+    fiches_page_obj = fiche_paginator.get_page(fiche_page)
 
     if request.method == 'POST':
-        form = RHUserUpdateForm(request.POST, instance=user_cible)
+        form = RHUserUpdateForm(request.POST, request.FILES, instance=user_cible)
         if form.is_valid():
             form.save()
-            enregistrer_action(request.user, 'UPDATE_USER_RH', f"Mise à jour RH de {user_cible.username}")
-            messages.success(request, f"✅ Données mises à jour pour {user_cible.username}")
-            url= reverse('user-detail') + f"?id={user_id}"
-            return HttpResponseRedirect(url)
-    else:
-        form = RHUserUpdateForm(instance=user_cible)
+            messages.success(request, f"✅ Profil de {user_cible.get_full_name()} mis à jour")
+            return redirect('user-detail', user_id=user_id)
 
-    return render(request, 'authentication/edit_user_rh.html', {'form': form, 'user_cible': user_cible})
+    context = {
+        'form': form,
+        'user_cible': user_cible,
+        'skills_page_obj': skills_page_obj,
+        'fiches_page_obj': fiches_page_obj,
+        'active_tab': request.GET.get('tab', 'infos')
+    }
+    return render(request, 'authentication/edit_user_rh.html', context)
 
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def remove_skill(request, user_id, skill_id):
+    user = get_object_or_404(User, id=user_id)
+    skill = get_object_or_404(Skill, id=skill_id)
+    
+    if request.method == 'POST':
+        user.skills.remove(skill)
+        messages.success(request, f"Compétence {skill.name} retirée")
+    
+    return redirect('edit-user-rh', user_id=user_id)
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def assign_fiche_poste(request, user_id, fiche_id):
+    user = get_object_or_404(User, id=user_id)
+    fiche = get_object_or_404(FichePoste, id=fiche_id)
+    
+    if request.method == 'POST':
+        user.fiche_poste = fiche
+        user.save()
+        messages.success(request, f"Fiche de poste {fiche.titre} attribuée")
+    
+    return redirect('edit-user-rh', user_id=user_id)

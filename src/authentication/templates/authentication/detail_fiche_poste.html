@@ -1,0 +1,139 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">
+                <i class="fas fa-file-alt me-2"></i>
+                Fiche de poste : {{ fiche.titre }}
+            </h2>
+            <p class="text-muted mb-0">
+                {% if fiche.is_modele %}
+                    <span class="badge bg-info text-dark">Modèle</span>
+                {% else %}
+                    <span class="badge bg-primary">Attribuée</span>
+                {% endif %}
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'liste-modeles-fiches' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Retour
+            </a>
+            {% if fiche.is_modele %}
+                <a href="{% url 'supprimer-fiche-poste' fiche.id %}" 
+                   class="btn btn-outline-danger ms-2"
+                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce modèle ?');">
+                    <i class="fas fa-trash me-1"></i> Supprimer
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4 class="mb-3">Description du poste</h4>
+                    {% if fiche.description %}
+                        <div class="bg-light p-3 rounded">
+                            {{ fiche.description|linebreaks }}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucune description disponible</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <h4 class="mb-3">Métadonnées</h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Créée le :</span>
+                            <strong>{{ fiche.date_creation|date:"d/m/Y" }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Dernière modification :</span>
+                            <strong>{{ fiche.date_modification|date:"d/m/Y" }}</strong>
+                        </li>
+                        {% if not fiche.is_modele and fiche.employe %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Attribuée à :</span>
+                            <a href="{% url 'user-detail' user_id=fiche.employe.id %}">
+                                {{ fiche.employe.get_full_name }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h4 class="mb-0">
+                <i class="fas fa-tasks me-2"></i>
+                Tâches associées
+            </h4>
+        </div>
+        <div class="card-body">
+            {% if fiche.taches.all %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Intitulé</th>
+                                <th>Description</th>
+                                <th>Fréquence</th>
+                                <th>Compétences</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tache in fiche.taches.all %}
+                            <tr>
+                                <td>{{ tache.intitule }}</td>
+                                <td>{{ tache.description|truncatechars:50 }}</td>
+                                <td>{{ tache.get_frequence_display }}</td>
+                                <td>
+                                    {% for competence in tache.competences.all %}
+                                        <span class="badge bg-secondary">{{ competence.name }}</span>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Aucune tâche n'est définie pour cette fiche de poste.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if fiche.is_modele %}
+    <div class="d-flex justify-content-end mt-4">
+        <a href="{% url 'ajouter-taches-modele' fiche.id %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Ajouter des tâches
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border-radius: 10px;
+    }
+    .list-group-item {
+        padding: 0.75rem 1.25rem;
+    }
+    .table th {
+        border-top: none;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}

@@ -51,7 +51,7 @@
                 <li class="list-group-item"><strong>Date de naissance :</strong> {{ user_cible.date_naissance|date:"d/m/Y" }}</li>
             </ul>
 
-            <a href="{% url 'dashboard-rh' %}" class="btn btn-secondary mt-3">← Retour au tableau</a>
+            <a href="{% url 'employees-view' %}" class="btn btn-secondary mt-3">← Retour au tableau</a>
             <a class="btn btn-secondary mt-3" href="{% url 'edit-user-rh' user_cible.id %}">✏️ Modifier</a>
         </div>
     </div>

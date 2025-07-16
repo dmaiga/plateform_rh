@@ -1,0 +1,102 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4" style="margin-top: 2em;">
+    <h2 class="mb-0">Fiches Employés</h2>
+    <a class="btn btn-primary" href="{% url 'create-user' %}">➕ Créer un utilisateur</a>
+</div>
+
+<form method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Rechercher par nom, rôle ou statut..." value="{{ query }}">
+        <button class="btn btn-outline-secondary" type="submit">🔍</button>
+    </div>
+</form>
+
+<div class="employee-list">
+    {% for user in users %}
+    <div class="employee-card card mb-4 shadow-sm">
+        <div class="card-body d-flex">
+            <div class="employee-photo me-4">
+                {% if user.photo %}
+                    <img src="{{ user.photo.url }}" class="rounded" style="width: 150px; height: 150px; object-fit: cover;" alt="Photo de {{ user.get_full_name }}">
+                {% else %}
+                    <div class="no-photo d-flex align-items-center justify-content-center rounded" style="width: 150px; height: 150px; background-color: #f0f0f0;">
+                        <span class="text-muted">Pas de photo</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="employee-info flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h3 class="mb-1">{{ user.get_full_name }}</h3>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">{{ user.get_role_display }}</span>
+                            <span class="badge bg-{% if user.statut == 'actif' %}success{% elif user.statut == 'pause' %}warning text-dark{% else %}secondary{% endif %}">
+                                {{ user.get_statut_display }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="employee-actions">
+                        <a href="{% url 'user-detail' %}?id={{ user.id }}" class="btn btn-sm btn-outline-primary"> Voir</a>
+                        <a href="{% url 'edit-user-rh' user.id %}" class="btn btn-sm btn-outline-warning"> Modifier</a>
+                    </div>
+                </div>
+                
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>📞 Pro:</strong> {{ user.telephone_pro|default:"Non renseigné" }}</p>
+                        <p class="mb-1"><strong>🏢 Poste:</strong> {{ user.poste_occupe|default:"Non renseigné" }}</p>
+                        <p class="mb-1"><strong>Fiche de poste:</strong> {{ user.fiche_poste|default:"Non renseigné" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>📍 Ville:</strong> {{ user.ville|default:"Non renseigné" }}</p>
+                        <p class="mb-1"><strong>📱 Perso:</strong> {{ user.telephone_perso|default:"Non renseigné" }}</p>
+                        {% if user.end_date %}
+                        <p class="mb-1"><strong>🚪 Départ:</strong> {{ user.end_date|date:"d/m/Y" }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if user.fiche_poste %}
+                <div class="mt-2">
+                    <span class="badge bg-info text-dark">Fiche de poste: {{ user.fiche_poste.titre }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-info">Aucun utilisateur trouvé.</div>
+    {% endfor %}
+</div>
+
+<style>
+    .employee-card {
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .employee-info h3 {
+        color: #333;
+        font-weight: 600;
+    }
+    
+    .no-photo {
+        border: 1px dashed #ccc;
+    }
+    
+    @media (max-width: 768px) {
+        .employee-card .card-body {
+            flex-direction: column;
+        }
+        
+        .employee-photo {
+            margin-bottom: 1rem;
+            margin-right: 0 !important;
+        }
+    }
+</style>
+
+{% endblock %}

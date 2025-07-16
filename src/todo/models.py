@@ -122,6 +122,4 @@ class FichePoste(models.Model):
     date_creation = models.DateTimeField(default=timezone.now)  # Exemple d'utilisation
 
     def __str__(self):
-        if self.is_modele:
-            return f"[Modèle] {self.titre}"
-        return f"{self.titre} - {self.employe.get_full_name() if self.employe else 'Non assignée'}"
+        return f"{self.titre}"

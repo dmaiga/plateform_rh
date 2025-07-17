@@ -6,20 +6,34 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from datetime import timedelta
+
 from . import forms 
 from .forms import CreateUserForm, PersonalUserUpdateForm, RHUserUpdateForm
 from .models import User,Skill
 from logs.utils import enregistrer_action
 from calendar import monthrange
 from todo.models import FichePoste, Tache,TacheSelectionnee   
-from datetime import date
+
 from .forms import FichePosteForm
 from django.utils import timezone
 
 from todo.views import get_planning_context
 from datetime import date, timedelta,datetime
 from django.core.paginator import Paginator
+
+from statics.utils import generate_graphs 
+from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+import logging
+from django.utils.timezone import now
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from functools import wraps
+
+
+
+logger = logging.getLogger(__name__)
 
 def is_rh_or_admin(user):
     return user.is_authenticated and user.role in ['admin', 'rh']
@@ -39,54 +53,66 @@ def get_performance_class(percentage):
 @login_required
 @user_passes_test(is_rh_or_admin)
 def dashboard_rh(request):
-    users = User.objects.exclude(role='admin').order_by('last_name')
-    today = timezone.now().date()
-    start_of_week = today - timedelta(days=today.weekday())
-    jours_semaine = [start_of_week + timedelta(days=i) for i in range(5)]  # Lundi à vendredi
+    try:
+        user_id = request.GET.get('user_id', 'all')
+        period = request.GET.get('period', 'week')
 
-    stats = []
-    for user in users:
-        user_data = {
-            'user': user,
-            'days': [],
-            'weekly_avg': 0,
-            'trend': 'stable'
-        }
-        
-        daily_percentages = []
-        for day in jours_semaine:
-            tasks_done = TacheSelectionnee.objects.filter(
-                user=user, 
-                date_selection=day,
-                is_done=True
-            ).count()
-            
-            # Calcul du pourcentage basé sur l'objectif de 6 tâches
-            percentage = round((tasks_done / 6) * 100) if tasks_done <= 6 else 100
-            
-            day_data = {
-                'date': day,
-                'percentage': percentage,
-                'tasks': f"{tasks_done}/6",
-                'css_class': get_performance_class(percentage)
+        users = User.objects.exclude(role='admin').order_by('last_name')
+        today = now().date()
+        start_of_week = today - timedelta(days=today.weekday())
+        jours_semaine = [start_of_week + timedelta(days=i) for i in range(5)]  # Lundi à vendredi
+
+        stats = []
+        for user in users:
+            user_data = {
+                'user': user,
+                'days': [],
+                'weekly_avg': 0,
+                'trend': 'stable'
             }
-            user_data['days'].append(day_data)
-            
-            daily_percentages.append(percentage)
-        
-        # Calcul de la moyenne hebdomadaire (somme des pourcentages / 5 jours)
-        user_data['weekly_avg'] = round(sum(daily_percentages) / 5)
-        user_data['weekly_class'] = get_performance_class(user_data['weekly_avg'])
-        
-        stats.append(user_data)
 
-    context = {
-        'stats': stats,
-        'week_days': jours_semaine,
-        'week_range': f"{start_of_week:%d/%m} - {(start_of_week + timedelta(days=4)):%d/%m}"
-    }
-    return render(request, 'authentication/dashboard_rh.html', context)
+            daily_percentages = []
+            for day in jours_semaine:
+                tasks_done = TacheSelectionnee.objects.filter(
+                    user=user,
+                    date_selection=day,
+                    is_done=True
+                ).count()
 
+                percentage = round((tasks_done / 6) * 100) if tasks_done <= 6 else 100
+
+                day_data = {
+                    'date': day,
+                    'percentage': percentage,
+                    'tasks': f"{tasks_done}/6",
+                    'css_class': get_performance_class(percentage)
+                }
+                user_data['days'].append(day_data)
+                daily_percentages.append(percentage)
+
+            user_data['weekly_avg'] = round(sum(daily_percentages) / len(jours_semaine))
+            user_data['weekly_class'] = get_performance_class(user_data['weekly_avg'])
+
+            stats.append(user_data)
+
+        # Génération des graphiques
+        graphs = generate_graphs(user_id=user_id, period=period)
+
+        context = {
+            'stats': stats,
+            'week_days': jours_semaine,
+            'week_range': f"{start_of_week:%d/%m} - {(start_of_week + timedelta(days=4)):%d/%m}",
+            'users': users,
+            'selected_user': user_id,
+            'selected_period': period,
+            **graphs
+        }
+
+        return render(request, 'authentication/dashboard_rh.html', context)
+
+    except Exception as e:
+        logger.error(f"Error generating dashboard data: {str(e)}")
+        raise
 
 @login_required
 @user_passes_test(is_rh_or_admin)

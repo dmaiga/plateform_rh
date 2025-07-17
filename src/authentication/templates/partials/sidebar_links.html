@@ -12,7 +12,7 @@
 
     <!-- Menu principal -->
     <ul class="nav flex-column flex-grow-1 p-3">
-        {% if user.role in 'employee stagiare' %}
+        {% if user.role in 'employee stagiaire' %}
         <li class="nav-item mb-2">
             <a class="nav-link text-dark {% if request.path == '/dashboard/' %}active-link{% endif %}" 
                href="{% url 'dashboard' %}">

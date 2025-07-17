@@ -77,26 +77,26 @@ def programmer_semaine(request):
 
 
 
-@login_required
 def get_planning_context(request):
-    offset = int(request.GET.get("semaine", 0))
+    offset = int(request.GET.get('semaine', 0))
     today = timezone.localdate()
-    start_of_week = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
-    jours = [start_of_week + timedelta(days=i) for i in range(7)]
-
-    taches_selectionnees = TacheSelectionnee.objects.filter(
-        user=request.user,
-        date_selection__range=(jours[0], jours[-1])
-    ).select_related('tache')
-
-    taches_par_jour = defaultdict(list)
-    for tsel in taches_selectionnees:
-        taches_par_jour[tsel.date_selection].append(tsel)
-
+    monday = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
+    
+    # Génération des jours du lundi au samedi seulement
+    jours = [monday + timedelta(days=i) for i in range(6)]  # 0=Monday to 5=Saturday
+    
+    taches_par_jour = {}
+    for jour in jours:
+        taches_par_jour[jour] = TacheSelectionnee.objects.filter(
+            user=request.user,
+            date_selection=jour
+        ).select_related('tache')
+    
     return {
         'jours': jours,
         'taches_par_jour': taches_par_jour,
         'offset': offset,
+        'today': today
     }
 
 @login_required

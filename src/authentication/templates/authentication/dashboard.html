@@ -38,8 +38,7 @@
             <a href="?semaine={{ offset|add:"-1" }}" class="btn btn-sm btn-outline-secondary hover-effect">
                 <i class="bi bi-chevron-left"></i> Précédente
             </a>
-            <strong class="text-primary">Semaine du {{ jours.0|date:"d M" }} au {{ jours.6|date:"d M Y" }}</strong>
-            <a href="?semaine={{ offset|add:"1" }}" class="btn btn-sm btn-outline-secondary hover-effect">
+                        <strong class="text-primary">Semaine du {{ jours.0|date:"d M" }} au {{ jours.5|date:"d M Y" }}</strong>            <a href="?semaine={{ offset|add:"1" }}" class="btn btn-sm btn-outline-secondary hover-effect">
                 Suivante <i class="bi bi-chevron-right"></i>
             </a>
         </div>
@@ -49,10 +48,10 @@
             <table class="table table-borderless text-center align-middle small">
                 <thead class="bg-light">
                     <tr>
-                        {% for jour in jours %}
-                            <th class="py-2 {% if jour|date:"D" == 'now'|date:"D" %}bg-primary text-white{% endif %}">
-                                {{ jour|date:"l" }}<br>
-                                <span class="badge {% if jour|date:"D" == 'now'|date:"D" %}bg-white text-primary{% else %}bg-secondary{% endif %} rounded-pill">
+                        {% for jour in jours|slice:":6" %} 
+                            <th class="py-2 {% if jour == today %}bg-primary text-white{% endif %}">
+                                {{ jour|date:"l"|capfirst }}<br>
+                                <span class="badge {% if jour == today %}bg-white text-primary{% else %}bg-secondary{% endif %} rounded-pill">
                                     {{ jour|date:"d" }}
                                 </span>
                             </th>
@@ -60,28 +59,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        {% for jour in jours %}
+                     <tr>
+                        {% for jour in jours|slice:":6" %}  <!-- Only show first 6 days -->
                             <td class="p-1" style="min-width: 150px; height: 120px;">
                                 <div class="h-100 d-flex flex-column">
                                     {% with liste=taches_par_jour|get_item:jour %}
                                         {% if liste %}
-{% for sel in liste %}
-<a href="{% url 'mes-taches' %}?date={{ sel.date_selection|date:"Y-m-d" }}" class="text-decoration-none text-dark">
-
-        <div class="task-card mb-1 p-2 rounded {% if sel.is_done %}bg-success-light border-start border-success border-3{% elif sel.is_started %}bg-warning-light border-start border-warning border-3{% else %}bg-light{% endif %}">
-            <div class="d-flex justify-content-between">
-                <span class="text-truncate">{{ sel.tache.titre }}</span>
-                {% if sel.is_done %}
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                {% elif sel.is_started %}
-                    <i class="bi bi-arrow-repeat text-warning"></i>
-                {% endif %}
-            </div>
-        </div>
-    </a>
-{% endfor %}
-
+                                            {% for sel in liste %}
+                                                <a href="{% url 'mes-taches' %}?date={{ sel.date_selection|date:"Y-m-d" }}" class="text-decoration-none text-dark">
+                                                    <div class="task-card mb-1 p-2 rounded {% if sel.is_done %}bg-success-light border-start border-success border-3{% elif sel.is_started %}bg-warning-light border-start border-warning border-3{% else %}bg-light{% endif %}">
+                                                        <div class="d-flex justify-content-between">
+                                                            <span class="text-truncate">{{ sel.tache.titre }}</span>
+                                                            {% if sel.is_done %}
+                                                                <i class="bi bi-check-circle-fill text-success"></i>
+                                                            {% elif sel.is_started %}
+                                                                <i class="bi bi-arrow-repeat text-warning"></i>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            {% endfor %}
                                         {% else %}
                                             <div class="text-muted small h-100 d-flex align-items-center justify-content-center">
                                                 <span>Aucune tâche</span>

@@ -27,6 +27,9 @@ def is_rh_or_admin(user):
 
 
 
+
+
+
 JOURS_FR = {
     'Monday': 'Lundi',
     'Tuesday': 'Mardi',

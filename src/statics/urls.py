@@ -8,5 +8,4 @@ urlpatterns = [
    path('historique/jour/<str:date_str>/', views.historique_jour, name='historique-jour'),
    path('export/journee/<date>/', views.export_statistiques, name='export-journee'),
    path('export-semaine/<str:format>/<str:start_date_str>/', views.export_semaine, name='export-semaine'),
-
 ]

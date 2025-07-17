@@ -19,55 +19,48 @@
             --color-average: #ff8f00;
             --color-poor: #d32f2f;
             --color-no-data: #f5f5f5;
-            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --border-radius: 10px;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --border-radius: 8px;
         }
 
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f8fafc;
             color: #37474f;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container-fluid {
+            padding: 20px;
         }
 
         .dashboard-header {
             background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
             color: white;
-            padding: 1.5rem;
+            padding: 20px;
             border-radius: var(--border-radius);
-            margin-bottom: 2rem;
+            margin-bottom: 20px;
         }
 
         .card {
             border: none;
             border-radius: var(--border-radius);
             box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
-            transition: transform 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-header {
-            background-color: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            font-weight: 500;
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+            margin-bottom: 20px;
         }
 
         .performance-summary-card {
             border-radius: var(--border-radius);
             box-shadow: var(--card-shadow);
             overflow: hidden;
-            margin-bottom: 2rem;
+            margin-bottom: 20px;
         }
 
         .summary-header {
             background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
             color: white;
-            padding: 1.25rem 1.5rem;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -76,68 +69,52 @@
         .summary-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .summary-table th {
             background-color: var(--color-secondary);
-            position: sticky;
-            top: 0;
             font-weight: 600;
             text-align: center;
-            padding: 12px 8px;
+            padding: 10px 8px;
             border-bottom: 2px solid #dee2e6;
         }
 
         .summary-table td {
-            padding: 12px 8px;
+            padding: 10px 8px;
             border-bottom: 1px solid #e9ecef;
             text-align: center;
             vertical-align: middle;
             background-color: white;
         }
 
-        .summary-table tr:last-child td {
-            border-bottom: none;
-        }
-
         .employee-cell {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .employee-avatar {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #e9ecef;
         }
 
-        .employee-info {
-            text-align: left;
-        }
-
         .employee-name {
             font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .employee-department {
-            font-size: 0.75rem;
-            color: #6c757d;
         }
 
         .performance-indicator {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 60px;
-            padding: 4px 8px;
+            min-width: 50px;
+            padding: 4px 6px;
             border-radius: 4px;
             font-weight: 500;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .performance-excellent { background-color: rgba(46, 125, 50, 0.1); color: var(--color-excellent); }
@@ -145,255 +122,62 @@
         .performance-average { background-color: rgba(255, 143, 0, 0.1); color: var(--color-average); }
         .performance-poor { background-color: rgba(211, 47, 47, 0.1); color: var(--color-poor); }
 
-        .hours-display {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: #37474f;
-        }
-
-        .trend-icon {
-            margin-left: 4px;
-            font-size: 1rem;
-        }
-
-        .trend-up { color: var(--color-excellent); }
-        .trend-down { color: var(--color-poor); }
-        .trend-neutral { color: var(--color-average); }
-
-        .progress-thin {
-            height: 6px;
-            border-radius: 3px;
-            margin-top: 4px;
+        .progress-container {
+            width: 100%;
             background-color: #e9ecef;
+            border-radius: 2px;
+            margin-top: 4px;
+            height: 4px;
         }
 
-        .progress-bar-excellent { background-color: var(--color-excellent); }
-        .progress-bar-good { background-color: var(--color-good); }
-        .progress-bar-average { background-color: var(--color-average); }
-        .progress-bar-poor { background-color: var(--color-poor); }
-
-        .hover-details {
-            cursor: help;
-            position: relative;
+        .progress-bar {
+            height: 100%;
+            border-radius: 2px;
         }
 
-        .hover-details:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            z-index: 100;
-        }
+        .progress-excellent { background-color: var(--color-excellent); width: 90%; }
+        .progress-good { background-color: var(--color-good); width: 70%; }
+        .progress-average { background-color: var(--color-average); width: 50%; }
+        .progress-poor { background-color: var(--color-poor); width: 30%; }
 
         .filter-card {
             background-color: white;
             border-radius: var(--border-radius);
             box-shadow: var(--card-shadow);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .kpi-card {
-            text-align: center;
-            padding: 1.5rem;
-        }
-
-        .kpi-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0.5rem 0;
-        }
-
-        .kpi-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .kpi-trend-up {
-            color: var(--color-excellent);
-        }
-
-        .kpi-trend-down {
-            color: var(--color-poor);
-        }
-
-        .section-title {
-            font-weight: 600;
-            color: var(--color-primary);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e9ecef;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
         .chart-container {
             background-color: white;
             border-radius: var(--border-radius);
-            padding: 1.5rem;
+            padding: 15px;
             box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
+            margin-bottom: 20px;
         }
 
         .chart-title {
             font-weight: 500;
-            margin-bottom: 1rem;
-            color: var(--color-primary);
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
 
-        @media (max-width: 992px) {
+        @media (max-width: 768px) {
             .summary-table {
                 display: block;
                 overflow-x: auto;
             }
         }
-
-        /* Animation pour les indicateurs de performance */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .performance-indicator:hover {
-            animation: pulse 0.5s ease;
-        }
-
-        /* Style pour les boutons */
-        .btn-primary {
-            background-color: var(--color-primary);
-            border-color: var(--color-primary);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--color-primary-dark);
-            border-color: var(--color-primary-dark);
-        }
     </style>
 </head>
 <body>
-<div class="container-fluid py-4">
-    <!-- En-tête du dashboard -->
-    <div class="dashboard-header">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1><i class="bi bi-speedometer2 me-2"></i>Tableau de bord RH</h1>
-                <p class="mb-0">Analyse des performances et productivité des équipes</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <div class="badge bg-white text-primary p-2">
-                    <i class="bi bi-calendar-check me-1"></i> 
-                    {% now "d F Y" %} - {% now "H:i" %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filtres -->
-    <div class="filter-card">
-        <h5 class="section-title"><i class="bi bi-funnel me-2"></i>Filtres</h5>
-        <form id="filter-form" class="row g-3 align-items-end">
-            <div class="col-md-5">
-                <label for="user-select" class="form-label">Employé :</label>
-                <select name="user_id" id="user-select" class="form-select">
-                    <option value="all">Tous les employés</option>
-                    {% for user in users %}
-                    <option value="{{ user.id }}" {% if selected_user == user.id|stringformat:"s" %}selected{% endif %}>
-                        {{ user.get_full_name }} 
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-5">
-                <label for="period-select" class="form-label">Période :</label>
-                <select name="period" id="period-select" class="form-select">
-                    <option value="week" {% if selected_period == 'week' %}selected{% endif %}>Semaine</option>
-                    <option value="month" {% if selected_period == 'month' %}selected{% endif %}>Mois</option>
-                    <option value="quarter" {% if selected_period == 'quarter' %}selected{% endif %}>Trimestre</option>
-                </select>
-            </div>
-            <div class="col-md-2 d-grid">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-funnel-fill me-1"></i> Appliquer
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- KPI Principaux -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card kpi-card">
-                <div class="card-body">
-                    <i class="bi bi-clock-history text-primary" style="font-size: 1.5rem;"></i>
-                    <div class="kpi-value">{{ total_hours|default:"0"|floatformat:1 }}h</div>
-                    <div class="kpi-label">Heures travaillées</div>
-                    <small class="text-muted">Moyenne: {{ avg_hours|default:"0"|floatformat:1 }}h/employé</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card kpi-card">
-                <div class="card-body">
-                    <i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
-                    <div class="kpi-value">{{ completion_rate|default:"0" }}%</div>
-                    <div class="kpi-label">Taux de complétion</div>
-                    <small class="text-muted">
-                        {% if completion_trend == 'up' %}
-                        <i class="bi bi-arrow-up-short kpi-trend-up"></i>
-                        {% elif completion_trend == 'down' %}
-                        <i class="bi bi-arrow-down-short kpi-trend-down"></i>
-                        {% else %}
-                        <i class="bi bi-dash"></i>
-                        {% endif %}
-                        vs période précédente
-                    </small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card kpi-card">
-                <div class="card-body">
-                    <i class="bi bi-lightning-charge text-warning" style="font-size: 1.5rem;"></i>
-                    <div class="kpi-value">{{ productivity_rate|default:"0" }}%</div>
-                    <div class="kpi-label">Productivité</div>
-                    <small class="text-muted">
-                        Objectif: {{ productivity_target|default:"80" }}%
-                        {% if productivity_rate >= productivity_target %}
-                        <i class="bi bi-check-circle-fill text-success ms-1"></i>
-                        {% else %}
-                        <i class="bi bi-exclamation-circle-fill text-danger ms-1"></i>
-                        {% endif %}
-                    </small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card kpi-card">
-                <div class="card-body">
-                    <i class="bi bi-people-fill text-info" style="font-size: 1.5rem;"></i>
-                    <div class="kpi-value">{{ active_employees }}</div>
-                    <div class="kpi-label">Employés actifs</div>
-                    <small class="text-muted">{{ inactive_employees }} inactifs cette semaine</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<div class="container-fluid">
     <!-- Tableau récapitulatif des performances -->
     <div class="performance-summary-card">
         <div class="summary-header">
-            <h5 class="mb-0">
+            <h5 style="margin: 0; font-size: 1.1rem;">
                 <i class="bi bi-table me-2"></i>Synthèse des performances - {{ week_range }}
             </h5>
-            <div class="badge bg-white text-primary">
-                <i class="bi bi-info-circle me-1"></i> Cliquez sur les cellules pour plus de détails
-            </div>
         </div>
 
         <div class="table-responsive">
@@ -402,13 +186,10 @@
                     <tr>
                         <th>Employé</th>
                         <th>Poste</th>
-                        <th>Département</th>
                         {% for day in week_days %}
-                        <th>{{ day|date:"D d/m" }}</th>
+                        <th>{{ day|date:"l"|capfirst }}</th>
                         {% endfor %}
-                        <th>Temps Total</th>
                         <th>Complétion</th>
-                        <th>Productivité</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -425,70 +206,28 @@
                                 {% endif %}
                                 <div class="employee-info">
                                     <div class="employee-name">{{ stat.user.get_full_name }}</div>
-                                    <div class="employee-department">{{ stat.user.departement|default:"-" }}</div>
                                 </div>
                             </div>
                         </td>
                         <td>{{ stat.user.poste_occupe|default:"-" }}</td>
-                        <td>{{ stat.user.departement|default:"-" }}</td>
 
                         {% for day in stat.days %}
-                        <td class="hover-details" data-tooltip="Tâches: {{ day.tasks|default:'Aucune donnée' }}">
+                        <td>
                             {% if day.percentage %}
                             <div class="performance-indicator performance-{{ day.css_class }}">
                                 {{ day.percentage }}%
                             </div>
-                            <div class="progress progress-thin">
-                                <div class="progress-bar progress-bar-{{ day.css_class }}" 
-                                     role="progressbar" 
-                                     
-                                     aria-valuenow="{{ day.percentage }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100"></div>
-                            </div>
+                         
                             {% else %}
                             <span class="text-muted">-</span>
                             {% endif %}
                         </td>
                         {% endfor %}
 
-                        <td class="hours-display">
-                            {{ stat.total_hours|default:"0"|floatformat:1 }}h
-                        </td>
-
                         <td>
                             {% if stat.weekly_avg %}
                             <div class="performance-indicator performance-{{ stat.weekly_class }}">
                                 {{ stat.weekly_avg }}%
-                                {% if stat.trend == 'up' %}
-                                <i class="bi bi-arrow-up-short trend-icon trend-up"></i>
-                                {% elif stat.trend == 'down' %}
-                                <i class="bi bi-arrow-down-short trend-icon trend-down"></i>
-                                {% else %}
-                                <i class="bi bi-dash trend-icon trend-neutral"></i>
-                                {% endif %}
-                            </div>
-                            {% else %}
-                            <span class="text-muted">-</span>
-                            {% endif %}
-                        </td>
-
-                        <td>
-                            {% if stat.productivity %}
-                            <div class="d-flex align-items-center justify-content-center">
-                                {% if stat.productivity >= 90 %}
-                                <i class="bi bi-lightning-charge-fill text-success me-2"></i>
-                                <span>Excellent</span>
-                                {% elif stat.productivity >= 70 %}
-                                <i class="bi bi-check-circle-fill text-primary me-2"></i>
-                                <span>Bon</span>
-                                {% elif stat.productivity >= 50 %}
-                                <i class="bi bi-exclamation-circle-fill text-warning me-2"></i>
-                                <span>Moyen</span>
-                                {% else %}
-                                <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
-                                <span>Faible</span>
-                                {% endif %}
                             </div>
                             {% else %}
                             <span class="text-muted">-</span>
@@ -500,45 +239,53 @@
             </table>
         </div>
     </div>
-
+    <!-- Filtres -->
+    <div class="filter-card">
+        <h5 style="font-weight: 600; margin-bottom: 15px;"><i class="bi bi-funnel me-2"></i>Filtres</h5>
+        <form id="filter-form" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label for="user-select" class="form-label">Employé :</label>
+                <select name="user_id" id="user-select" class="form-select form-select-sm">
+                    <option value="all">Tous les employés</option>
+                    {% for user in users %}
+                    <option value="{{ user.id }}" {% if selected_user == user.id|stringformat:"s" %}selected{% endif %}>
+                        {{ user.get_full_name }} 
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label for="period-select" class="form-label">Période :</label>
+                <select name="period" id="period-select" class="form-select form-select-sm">
+                    <option value="week" {% if selected_period == 'week' %}selected{% endif %}>Semaine</option>
+                    <option value="month" {% if selected_period == 'month' %}selected{% endif %}>Mois</option>
+                    <option value="quarter" {% if selected_period == 'quarter' %}selected{% endif %}>Trimestre</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-funnel-fill me-1"></i> Appliquer
+                </button>
+            </div>
+        </form>
+    </div>
     <!-- Visualisations -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="chart-container">
-                <h5 class="chart-title"><i class="bi bi-bar-chart-line me-2"></i>Temps d'activité</h5>
-                {{ graph_activite|safe }}
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="chart-container">
-                <h5 class="chart-title"><i class="bi bi-list-task me-2"></i>Top 5 des tâches les plus longues</h5>
-                {{ graph_top5|safe }}
-            </div>
-        </div>
-    </div>
+   
 
     <div class="row">
-        <div class="col-md-6">
+        
             <div class="chart-container">
-                <h5 class="chart-title"><i class="bi bi-graph-up me-2"></i>Évolution des performances</h5>
-                {{ graph_performance|safe }}
+                <h5 class="chart-title"><i class="bi bi-graph-up me-2"></i>Performance individuelle</h5>
+                {{ graph_perf_individuelle|safe }}
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="chart-container">
-                <h5 class="chart-title"><i class="bi bi-person-x me-2"></i>Employés inactifs</h5>
-                {{ graph_inactifs|safe }}
-            </div>
-        </div>
     </div>
-
     <div class="row">
-        <div class="col-md-12">
+        
             <div class="chart-container">
                 <h5 class="chart-title"><i class="bi bi-people-fill me-2"></i>Performance collective</h5>
                 {{ graph_perf_collective|safe }}
             </div>
-        </div>
+    </div>
     </div>
 </div>
 
@@ -558,20 +305,8 @@ function resizeCharts() {
     });
 }
 
-// Initialisation
 document.addEventListener('DOMContentLoaded', function() {
     resizeCharts();
-    
-    // Gestion des tooltips
-    const tooltips = document.querySelectorAll('.hover-details');
-    tooltips.forEach(tooltip => {
-        tooltip.addEventListener('click', function() {
-            const content = this.getAttribute('data-tooltip');
-            if (content) {
-                alert('Détails:\n' + content);
-            }
-        });
-    });
 });
 
 window.addEventListener('resize', resizeCharts);

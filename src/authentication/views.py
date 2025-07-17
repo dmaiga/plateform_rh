@@ -60,7 +60,7 @@ def dashboard_rh(request):
         users = User.objects.exclude(role='admin').order_by('last_name')
         today = now().date()
         start_of_week = today - timedelta(days=today.weekday())
-        jours_semaine = [start_of_week + timedelta(days=i) for i in range(5)]  # Lundi à vendredi
+        jours_semaine = [start_of_week + timedelta(days=i) for i in range(5)] 
 
         stats = []
         for user in users:

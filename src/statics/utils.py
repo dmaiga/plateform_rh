@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.utils.timezone import now
 from django.db.models import (
     ExpressionWrapper, F, DurationField, Sum, Count, Q,
-    Value, CharField, FloatField, Case, When
+    Value, CharField, FloatField, Case, When, IntegerField
 )
 from django.db.models.functions import TruncDate, Concat, Coalesce
 from plotly import express as px
@@ -10,9 +10,7 @@ from todo.models import SuiviTache, TacheSelectionnee
 from authentication.models import User
 import humanize
 
-# Activation du format français pour les durées
 humanize.activate('fr_FR')
-
 
 def format_duree(seconds):
     """Convertit les secondes en format HH:MM."""
@@ -20,7 +18,6 @@ def format_duree(seconds):
     hours = int(seconds // 3600)
     minutes = int((seconds % 3600) // 60)
     return f"{hours:02d}h{minutes:02d}"
-
 
 def generate_graphs(user_id=None, period='30j'):
     end_date = now().date()
@@ -79,7 +76,7 @@ def generate_graphs(user_id=None, period='30j'):
         fig.update_layout(yaxis={'categoryorder': 'total descending'})
         return fig
 
-    def graph_top5_taches():
+    def graph_top10_taches():
         queryset = SuiviTache.objects.filter(
             start_time__date__range=[start_date, end_date],
             end_time__isnull=False
@@ -95,11 +92,11 @@ def generate_graphs(user_id=None, period='30j'):
             )
         ).values('tache__titre')
          .annotate(total_sec=Sum('duree_sec'))
-         .order_by('-total_sec')[:5])
+         .order_by('-total_sec')[:10])
 
         if not data:
             return px.bar(
-                title="Top 5 tâches les plus longues"
+                title="Top 10 tâches les plus longues"
             ).update_layout(annotations=[{
                 'text': 'Aucune donnée disponible',
                 'xref': 'paper',
@@ -119,79 +116,31 @@ def generate_graphs(user_id=None, period='30j'):
             y='tache__titre',
             orientation='h',
             text='duree',
-            title="Top 5 tâches les plus longues",
+            title="Top 10 tâches les plus longues",
             labels={'tache__titre': 'Tâche'}
         )
         fig.update_traces(texttemplate='%{text}', textposition='outside')
         return fig
-
-    def graph_evolution_performance():
-        queryset = TacheSelectionnee.objects.filter(base_filter)
-        data = list(queryset.annotate(jour=TruncDate('date_selection'))
-                   .values('jour', 'user__first_name', 'user__last_name')
-                   .annotate(
-                       total=Count('id'),
-                       fait=Count('id', filter=Q(is_done=True))
-                   ).order_by('jour'))
-
-        user_data = {}
-        for entry in data:
-            nom = f"{entry['user__first_name']} {entry['user__last_name']}"
-            pourcentage = (entry['fait'] / entry['total']) * 100 if entry['total'] else 0
-            user_data.setdefault(nom, {'jours': [], 'pourcentages': []})
-            user_data[nom]['jours'].append(entry['jour'])
-            user_data[nom]['pourcentages'].append(round(pourcentage, 1))
-
-        fig = px.line(title="Évolution des performances quotidiennes")
-        for nom, d in user_data.items():
-            fig.add_scatter(
-                x=d['jours'],
-                y=d['pourcentages'],
-                name=nom,
-                mode='lines+markers'
-            )
-
-        fig.update_layout(
-            yaxis_title="Taux de complétion (%)",
-            yaxis_range=[0, 110],
-            xaxis_title='Date',
-            legend_title='Employés'
-        )
-        return fig
-
-    def graph_inactifs():
-        seuil = now() - timedelta(days=7)
-        actifs = SuiviTache.objects.filter(start_time__gte=seuil) \
-            .exclude(user__role='admin') \
-            .values_list('user_id', flat=True).distinct()
-
-        inactifs = User.objects.exclude(role='admin').exclude(id__in=actifs).annotate(
-            nom_complet=Concat(F('first_name'), Value(' '), F('last_name'))
-        )
-
-        return px.bar(
-            list(inactifs.values('nom_complet')),
-            x='nom_complet',
-            title="Employés inactifs depuis 7 jours",
-            labels={'nom_complet': 'Employé'}
-        )
 
     def graph_perf_collective():
         stats = TacheSelectionnee.objects.filter(base_filter) \
             .annotate(jour=TruncDate('date_selection')) \
             .values('jour') \
             .annotate(
-                fait=Count('id', filter=Q(is_done=True)),
-                total=Count('id')
+                total_taches=Count('id', output_field=IntegerField()),
+                taches_completees=Count('id', filter=Q(is_done=True), output_field=IntegerField())
             ) \
             .annotate(
-                taux=ExpressionWrapper(
-                    100.0 * F('fait') / F('total'),
-                    output_field=FloatField()
+                taux_jour=Case(
+                    When(total_taches=0, then=Value(0.0, output_field=FloatField())),
+                    default=ExpressionWrapper(
+                        100.0 * F('taches_completees') / F('total_taches'),
+                        output_field=FloatField()
+                    )
                 )
             ).order_by('jour')
 
-        data = [{'date': s['jour'], 'taux': s.get('taux', 0)} for s in stats]
+        data = [{'date': s['jour'], 'taux': s['taux_jour']} for s in stats]
 
         fig = px.line(
             data,
@@ -216,8 +165,8 @@ def generate_graphs(user_id=None, period='30j'):
             ).annotate(jour=TruncDate('date_selection')) \
              .values('jour') \
              .annotate(
-                 fait=Count('id', filter=Q(is_done=True)),
-                 total=Count('id')
+                 fait=Count('id', filter=Q(is_done=True), output_field=IntegerField()),
+                 total=Count('id', output_field=IntegerField())
              ).annotate(
                  taux=ExpressionWrapper(
                      100.0 * F('fait') / F('total'),
@@ -245,9 +194,7 @@ def generate_graphs(user_id=None, period='30j'):
 
     return {
         'graph_activite': graph_temps_activite().to_html(),
-        'graph_top5': graph_top5_taches().to_html(),
-        'graph_performance': graph_evolution_performance().to_html(),
-        'graph_inactifs': graph_inactifs().to_html(),
+        'graph_top10': graph_top10_taches().to_html(),
         'graph_perf_collective': graph_perf_collective().to_html(),
         'graph_perf_individuelle': graph_perf_individuelle().to_html()
     }

@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from . import forms 
-from .forms import CreateUserForm, PersonalUserUpdateForm, RHUserUpdateForm
+from .forms import CreateUserForm, PersonalUserUpdateForm, RHUserUpdateForm,RHUserBasicForm
 from .models import User,Skill
 from logs.utils import enregistrer_action
 from calendar import monthrange
@@ -30,7 +30,8 @@ from django.utils.timezone import now
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from functools import wraps
-
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 logger = logging.getLogger(__name__)
@@ -38,80 +39,107 @@ logger = logging.getLogger(__name__)
 def is_rh_or_admin(user):
     return user.is_authenticated and user.role in ['admin', 'rh']
 
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important ! Maintient la session
+            messages.success(request, '🔐 Mot de passe modifié avec succès.')
+            return redirect('dashboard')  # ou autre page
+        else:
+            messages.error(request, '❌ Veuillez corriger les erreurs.')
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'authentication/change_password.html', {'form': form})
+
+
+
 def get_performance_class(percentage):
     if percentage is None:
         return 'no-data'
     if percentage >= 90:
-        return 'excellent'
+        return 'Excellent'
     if percentage >= 70:
-        return 'good'
+        return 'Très bon'
     if percentage >= 50:
-        return 'average'
-    return 'poor'
+        return 'Satisfaisant'
+    return 'Insuffisant'
 
 
 @login_required
 @user_passes_test(is_rh_or_admin)
 def dashboard_rh(request):
     try:
-        user_id = request.GET.get('user_id', 'all')
-        period = request.GET.get('period', 'week')
-
+        # Récupération des filtres GET
+        poste = request.GET.get('poste')
+        role = request.GET.get('role')
+        nom = request.GET.get('nom')
+        statut = request.GET.get('statut')
         users = User.objects.exclude(role='admin').order_by('last_name')
+
+        # Application des filtres
+        if poste:
+            users = users.filter(poste_occupe__icontains=poste)
+        if role:
+            users = users.filter(role=role)
+        if statut:
+            users = users.filter(statut=statut)        
+        if nom:
+            users = users.filter(last_name__icontains=nom)
+
         today = now().date()
         start_of_week = today - timedelta(days=today.weekday())
-        jours_semaine = [start_of_week + timedelta(days=i) for i in range(5)] 
+        jours_semaine = [start_of_week + timedelta(days=i) for i in range(5)]
 
         stats = []
         for user in users:
-            user_data = {
-                'user': user,
-                'days': [],
-                'weekly_avg': 0,
-                'trend': 'stable'
-            }
+            fiche_poste = getattr(user.fiche_poste, 'titre', 'N/A') if hasattr(user, 'fiche_poste') else 'N/A'
+            daily_data = []
 
-            daily_percentages = []
             for day in jours_semaine:
                 tasks_done = TacheSelectionnee.objects.filter(
                     user=user,
                     date_selection=day,
                     is_done=True
                 ).count()
-
                 percentage = round((tasks_done / 6) * 100) if tasks_done <= 6 else 100
-
-                day_data = {
-                    'date': day,
+                css_class = get_performance_class(percentage)
+                daily_data.append({
                     'percentage': percentage,
-                    'tasks': f"{tasks_done}/6",
-                    'css_class': get_performance_class(percentage)
-                }
-                user_data['days'].append(day_data)
-                daily_percentages.append(percentage)
+                    'css_class': css_class,
+                    'date': day
+                })
 
-            user_data['weekly_avg'] = round(sum(daily_percentages) / len(jours_semaine))
-            user_data['weekly_class'] = get_performance_class(user_data['weekly_avg'])
-
-            stats.append(user_data)
-
-        # Génération des graphiques
-        graphs = generate_graphs(user_id=user_id, period=period)
-
+            weekly_avg = round(sum(d['percentage'] for d in daily_data) / len(jours_semaine))
+            stats.append({
+                'user': user,
+                'fiche_poste': fiche_poste,
+                'days': daily_data,  
+                'weekly_avg': weekly_avg,
+                'weekly_class': get_performance_class(weekly_avg),
+            })
         context = {
             'stats': stats,
-            'week_days': jours_semaine,
             'week_range': f"{start_of_week:%d/%m} - {(start_of_week + timedelta(days=4)):%d/%m}",
+            'jours_semaine': jours_semaine,
             'users': users,
-            'selected_user': user_id,
-            'selected_period': period,
-            **graphs
+            'filters': {
+                'poste': poste or '',
+                'role': role or '',
+                'nom': nom or '',
+                'statut': statut or '',
+            }
         }
 
         return render(request, 'authentication/dashboard_rh.html', context)
 
     except Exception as e:
-        logger.error(f"Error generating dashboard data: {str(e)}")
+        logger.error(f"Erreur dans dashboard RH : {str(e)}")
         raise
 
 @login_required
@@ -384,39 +412,23 @@ def user_detail(request):
 
     return render(request, 'authentication/user_detail.html', {'user_cible': user_cible})
 
-
-
 @login_required
 @user_passes_test(is_rh_or_admin)
 def edit_user_rh(request, user_id):
     user_cible = get_object_or_404(User, id=user_id)
-    form = RHUserUpdateForm(instance=user_cible)
-    skills = user_cible.skills.all()
-    
-    # Pagination pour les compétences
-    skill_paginator = Paginator(skills, 5)
-    skill_page = request.GET.get('skill_page')
-    skills_page_obj = skill_paginator.get_page(skill_page)
-    
-    # Pagination pour les fiches de poste disponibles
-    available_fiches = FichePoste.objects.all()
-    fiche_paginator = Paginator(available_fiches, 5)
-    fiche_page = request.GET.get('fiche_page')
-    fiches_page_obj = fiche_paginator.get_page(fiche_page)
 
     if request.method == 'POST':
-        form = RHUserUpdateForm(request.POST, request.FILES, instance=user_cible)
+        form = RHUserBasicForm(request.POST, request.FILES, instance=user_cible)
         if form.is_valid():
             form.save()
             messages.success(request, f"✅ Profil de {user_cible.get_full_name()} mis à jour")
-            return redirect('user-detail', user_id=user_id)
+            return redirect('dashboard-rh')  # ou autre vue pertinente
+    else:
+        form = RHUserBasicForm(instance=user_cible)
 
     context = {
         'form': form,
         'user_cible': user_cible,
-        'skills_page_obj': skills_page_obj,
-        'fiches_page_obj': fiches_page_obj,
-        'active_tab': request.GET.get('tab', 'infos')
     }
     return render(request, 'authentication/edit_user_rh.html', context)
 

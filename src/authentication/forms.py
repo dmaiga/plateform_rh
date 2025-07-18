@@ -40,7 +40,7 @@ class PersonalUserUpdateForm(forms.ModelForm):
             'last_name', 
             'email', 
             'photo',
-            'telephone_perso',
+            'telephone_pro',
             'ville',
             'quartier',
             'porte',
@@ -50,63 +50,54 @@ class PersonalUserUpdateForm(forms.ModelForm):
             'poste_occupe',
         ]
  
-
-
 class RHUserUpdateForm(forms.ModelForm):
     skills_list = forms.ModelMultipleChoiceField(
         queryset=Skill.objects.all(),
         required=False,
-        widget=forms.SelectMultiple(attrs={'class': 'select2'}),
+        widget=forms.SelectMultiple(attrs={'class': 'select2 form-control'}),
         label="Compétences"
     )
-    
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = [
+            'first_name', 'last_name', 'email', 'role', 'statut',
+            'poste_occupe', 'department', 'start_date', 'end_date',
+            'last_evaluation', 'contract_type', 'manager',
+            'photo', 'cv', 'contract_file',
+            'telephone_pro', 'telephone_perso',
+            'quartier', 'rue', 'porte', 'ville',
+            'contact_urgence', 'salary', 'remote_days',
+            'working_hours', 'notes'
+        ]
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'last_evaluation': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Initialiser les compétences
         if self.instance.pk:
             self.fields['skills_list'].initial = self.instance.skills.all()
-        
-        # Réorganisation des champs
-        self.field_groups = {
-            'informations_principales': [
-                'username', 'first_name', 'last_name', 'email',
-                'role', 'statut', 'poste_occupe', 'department',
-                'contract_type', 'start_date', 'end_date'
-            ],
-            'coordonnees': [
-                'telephone_pro', 'telephone_perso',
-                'ville', 'quartier', 'rue', 'porte'
-            ],
-            'relations': [
-                'manager', 'skills_list'
-            ],
-            'details': [
-                'date_naissance', 'contact_urgence',
-                'last_evaluation', 'salary', 'remote_days',
-                'working_hours', 'notes'
-            ],
-            'fichiers': [
-                'photo', 'cv', 'contract_file'
-            ]
-        }
-
-        # Suppression du doublon fiche_poste si nécessaire
-        if 'fiche_poste' in self.fields and hasattr(self.instance, 'fiche_poste'):
-            self.fields['fiche_poste'].initial = self.instance.fiche_poste
 
     def save(self, commit=True):
-        user = super().save(commit=commit)
+        user = super().save(commit)
         if commit:
-            user.skills.set(self.cleaned_data['skills_list'])
+            user.skills.set(self.cleaned_data.get('skills_list', []))
         return user
 
 
-
+class RHUserBasicForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            'role', 'statut', 'poste_occupe',
+            'department', 'start_date', 'end_date'
+        ]
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }

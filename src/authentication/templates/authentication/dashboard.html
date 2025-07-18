@@ -48,7 +48,7 @@
             <table class="table table-borderless text-center align-middle small">
                 <thead class="bg-light">
                     <tr>
-                        {% for jour in jours|slice:":6" %} 
+                        {% for jour in jours|slice:":5" %} 
                             <th class="py-2 {% if jour == today %}bg-primary text-white{% endif %}">
                                 {{ jour|date:"l"|capfirst }}<br>
                                 <span class="badge {% if jour == today %}bg-white text-primary{% else %}bg-secondary{% endif %} rounded-pill">

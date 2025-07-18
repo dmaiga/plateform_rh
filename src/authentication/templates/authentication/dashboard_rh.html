@@ -8,308 +8,306 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard RH - Performance des équipes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --color-primary: #1976d2;
-            --color-primary-dark: #0d47a1;
-            --color-secondary: #f5f7fa;
-            --color-excellent: #2e7d32;
-            --color-good: #689f38;
-            --color-average: #ff8f00;
-            --color-poor: #d32f2f;
-            --color-no-data: #f5f5f5;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            --border-radius: 8px;
-        }
-
+        /* Styles essentiels seulement */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f8fafc;
-            color: #37474f;
-            padding: 0;
             margin: 0;
+            padding: 0;
         }
-
+        
         .container-fluid {
-            padding: 20px;
-        }
-
-        .dashboard-header {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-            color: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-        }
-
-        .card {
-            border: none;
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            margin-bottom: 20px;
-        }
-
-        .performance-summary-card {
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .summary-header {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-            color: white;
             padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
-
+        
+        /* Tableau agrandi et accroché en haut */
+        .performance-summary-card {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        
         .summary-table {
             width: 100%;
+            font-size: 1rem; /* Taille de police augmentée */
             border-collapse: collapse;
-            font-size: 0.85rem;
         }
-
-        .summary-table th {
-            background-color: var(--color-secondary);
-            font-weight: 600;
-            text-align: center;
-            padding: 10px 8px;
-            border-bottom: 2px solid #dee2e6;
-        }
-
+        
+        .summary-table th, 
         .summary-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #e9ecef;
+            padding: 12px 10px; /* Cellules plus grandes */
             text-align: center;
-            vertical-align: middle;
-            background-color: white;
+            border: 1px solid #e0e0e0;
         }
-
-        .employee-cell {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .employee-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #e9ecef;
-        }
-
-        .employee-name {
+        
+        .summary-table th {
+            background-color: #f5f5f5;
             font-weight: 600;
         }
-
-        .performance-indicator {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 50px;
-            padding: 4px 6px;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 0.8rem;
-        }
-
-        .performance-excellent { background-color: rgba(46, 125, 50, 0.1); color: var(--color-excellent); }
-        .performance-good { background-color: rgba(104, 159, 56, 0.1); color: var(--color-good); }
-        .performance-average { background-color: rgba(255, 143, 0, 0.1); color: var(--color-average); }
-        .performance-poor { background-color: rgba(211, 47, 47, 0.1); color: var(--color-poor); }
-
-        .progress-container {
-            width: 100%;
-            background-color: #e9ecef;
-            border-radius: 2px;
-            margin-top: 4px;
-            height: 4px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            border-radius: 2px;
-        }
-
-        .progress-excellent { background-color: var(--color-excellent); width: 90%; }
-        .progress-good { background-color: var(--color-good); width: 70%; }
-        .progress-average { background-color: var(--color-average); width: 50%; }
-        .progress-poor { background-color: var(--color-poor); width: 30%; }
-
+        
+        /* Filtres compacts */
         .filter-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 15px;
         }
-
-        .chart-container {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 15px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 20px;
+        
+        .filter-form {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-wrap: wrap;
         }
-
-        .chart-title {
-            font-weight: 500;
-            margin-bottom: 10px;
-            font-size: 1rem;
+        
+        .filter-group {
+            margin-bottom: 0;
+            min-width: 180px;
         }
-
-        @media (max-width: 768px) {
-            .summary-table {
-                display: block;
-                overflow-x: auto;
-            }
-        }
-    </style>
+        
+        /* Cartes employés */
+        
+        /* Indicateurs de performance */
+        .performance-excellent { color: #2e7d32; } /* >86% - Vert */
+        .performance-good { color: #689f38; } /* 86% - Vert clair */
+        .performance-average { color: #ff8f00; } /* <86% et >=50% - Jaune */
+        .performance-poor { color: #d32f2f; } /* <50% - Rouge */
+        
+        /* Classes pour les cellules de pourcentage */
+        .percent-red { color: #d32f2f; } /* <50% */
+        .percent-yellow { color: #ff8f00; } /* <86% */
+        .percent-green { color: #2e7d32; } /* >=86% */
+        .percent-light-green { color: #689f38; } /* >86% et <=100% - Vert clair */
+        
+    .employee-cards {
+        margin-top: 20px;
+    }
+    
+    .employee-card {
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.2s;
+    }
+    
+   
+    
+    .employee-photo {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border: 2px solid #dee2e6;
+    }
+    
+    .employee-photo-placeholder {
+        width: 60px;
+        height: 60px;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-size: 1.5rem;
+    }
+    
+    .performance-section {
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 8px;
+    }
+    
+    .info-section {
+        margin-top: 15px;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-item i {
+        color: #1976d2;
+        min-width: 24px;
+    }
+    
+    /* Couleurs de performance */
+    .performance-badge-excellent {
+        background-color: #e6f7e6;
+        color: #2e7d32;
+        border: 1px solid #2e7d32;
+    }
+    
+    .performance-badge-good {
+        background-color: #f0f9e6;
+        color: #689f38;
+        border: 1px solid #689f38;
+    }
+    
+    .performance-badge-average {
+        background-color: #fff8e6;
+        color: #ff8f00;
+        border: 1px solid #ff8f00;
+    }
+    
+    .performance-badge-poor {
+        background-color: #ffebee;
+        color: #d32f2f;
+        border: 1px solid #d32f2f;
+    }
+    
+    .bg-excellent { background-color: #2e7d32; }
+    .bg-good { background-color: #689f38; }
+    .bg-average { background-color: #ff8f00; }
+    .bg-poor { background-color: #d32f2f; }
+</style>
 </head>
 <body>
+   
 <div class="container-fluid">
-    <!-- Tableau récapitulatif des performances -->
+    <!-- Tableau synthèse des performances - version simplifiée -->
     <div class="performance-summary-card">
-        <div class="summary-header">
-            <h5 style="margin: 0; font-size: 1.1rem;">
-                <i class="bi bi-table me-2"></i>Synthèse des performances - {{ week_range }}
+        <div style="background: #1976d2; color: white; padding: 12px; border-radius: 8px 8px 0 0;">
+            <h5 style="margin: 0; font-size: 1.2rem;">
+                <i class="bi bi-table me-2"></i>Synthèse des performances - Semaine du {{ jours_semaine.0|date:"d M" }} au {{ jours_semaine.4|date:"d M Y" }}
             </h5>
         </div>
-
-        <div class="table-responsive">
+        
+        <div style="overflow-x: auto;">
             <table class="summary-table">
                 <thead>
                     <tr>
-                        <th>Employé</th>
-                        <th>Poste</th>
-                        {% for day in week_days %}
-                        <th>{{ day|date:"l"|capfirst }}</th>
+                        <th style="min-width: 200px;">Employé</th>
+                        {% for day in jours_semaine %}
+                        <th>{{ day|date:"l" }}</th>  {# Format complet du jour (lundi, mardi...) #}
                         {% endfor %}
-                        <th>Complétion</th>
+                        <th>Résultat</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for stat in stats %}
                     <tr>
-                        <td>
-                            <div class="employee-cell">
+                        <td style="text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
                                 {% if stat.user.photo %}
-                                <img src="{{ stat.user.photo.url }}" alt="{{ stat.user.get_full_name }}" class="employee-avatar">
-                                {% else %}
-                                <div class="employee-avatar bg-light text-center pt-1">
-                                    <i class="bi bi-person-fill" style="color: #6c757d;"></i>
-                                </div>
+                                <img src="{{ stat.user.photo.url }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
                                 {% endif %}
-                                <div class="employee-info">
-                                    <div class="employee-name">{{ stat.user.get_full_name }}</div>
+                                <div>
+                                    <div>{{ stat.user.get_full_name }}</div>
+                                    <small style="color: #666;">{{ stat.user.poste_occupe }}</small>
                                 </div>
                             </div>
                         </td>
-                        <td>{{ stat.user.poste_occupe|default:"-" }}</td>
-
                         {% for day in stat.days %}
-                        <td>
-                            {% if day.percentage %}
-                            <div class="performance-indicator performance-{{ day.css_class }}">
-                                {{ day.percentage }}%
-                            </div>
-                         
-                            {% else %}
-                            <span class="text-muted">-</span>
-                            {% endif %}
+                        <td class="{% if day.percentage < 50 %}percent-red{% elif day.percentage < 86 %}percent-yellow{% elif day.percentage == 86 %}percent-green{% else %}percent-light-green{% endif %}">
+                            {{ day.percentage }}%
                         </td>
                         {% endfor %}
-
-                        <td>
-                            {% if stat.weekly_avg %}
-                            <div class="performance-indicator performance-{{ stat.weekly_class }}">
-                                {{ stat.weekly_avg }}%
-                            </div>
-                            {% else %}
-                            <span class="text-muted">-</span>
-                            {% endif %}
+                        <td class="{% if stat.weekly_avg < 50 %}percent-red{% elif stat.weekly_avg < 86 %}percent-yellow{% elif stat.weekly_avg == 86 %}percent-green{% else %}percent-light-green{% endif %}">
+                            {{ stat.weekly_avg }}%
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
-    <!-- Filtres -->
+    </div>   
+    
+    <!-- Filtres compacts -->
     <div class="filter-card">
-        <h5 style="font-weight: 600; margin-bottom: 15px;"><i class="bi bi-funnel me-2"></i>Filtres</h5>
-        <form id="filter-form" class="row g-2 align-items-end">
-            <div class="col-md-5">
-                <label for="user-select" class="form-label">Employé :</label>
-                <select name="user_id" id="user-select" class="form-select form-select-sm">
-                    <option value="all">Tous les employés</option>
-                    {% for user in users %}
-                    <option value="{{ user.id }}" {% if selected_user == user.id|stringformat:"s" %}selected{% endif %}>
-                        {{ user.get_full_name }} 
-                    </option>
-                    {% endfor %}
+        <form method="get" class="filter-form">
+            <div class="filter-group">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Rôle</label>
+                <select name="role" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                    <option value="">Tous</option>
+                    <option value="employe" {% if filters.role == 'employe' %}selected{% endif %}>Employé</option>
+                    <option value="stagiaire" {% if filters.role == 'stagiaire' %}selected{% endif %}>Stagiaire</option>
                 </select>
             </div>
-            <div class="col-md-5">
-                <label for="period-select" class="form-label">Période :</label>
-                <select name="period" id="period-select" class="form-select form-select-sm">
-                    <option value="week" {% if selected_period == 'week' %}selected{% endif %}>Semaine</option>
-                    <option value="month" {% if selected_period == 'month' %}selected{% endif %}>Mois</option>
-                    <option value="quarter" {% if selected_period == 'quarter' %}selected{% endif %}>Trimestre</option>
+            
+            <div class="filter-group">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Statut</label>
+                <select name="statut" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                    <option value="">Tous</option>
+                    <option value="actif" {% if filters.statut == 'actif' %}selected{% endif %}>Actif</option>
+                    <option value="pause" {% if filters.statut == 'pause' %}selected{% endif %}>En pause</option>
+                    <option value="termine" {% if filters.statut == 'termine' %}selected{% endif %}>Terminé</option>
                 </select>
             </div>
-            <div class="col-md-2 d-grid">
-                <button type="submit" class="btn btn-primary btn-sm">
-                    <i class="bi bi-funnel-fill me-1"></i> Appliquer
-                </button>
-            </div>
+            
+            <button type="submit" style="background: #1976d2; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                <i class="bi bi-funnel-fill"></i> Appliquer
+            </button>
         </form>
     </div>
-    <!-- Visualisations -->
-   
+    
 
-    <div class="row">
-        
-            <div class="chart-container">
-                <h5 class="chart-title"><i class="bi bi-graph-up me-2"></i>Performance individuelle</h5>
-                {{ graph_perf_individuelle|safe }}
-            </div>
-    </div>
-    <div class="row">
-        
-            <div class="chart-container">
-                <h5 class="chart-title"><i class="bi bi-people-fill me-2"></i>Performance collective</h5>
-                {{ graph_perf_collective|safe }}
-            </div>
-    </div>
-    </div>
 </div>
+    <!-- Cartes employés simplifiées -->
+        <!-- Cartes employés simplifiées -->
+    <div class="employee-cards row g-3">
+    {% for stat in stats %}
+    <div class="col-md-6 col-lg-4">
+        <div class="employee-card card h-100 shadow-sm">
+            <!-- En-tête avec photo et info de base -->
+            <div class="card-header bg-light">
+                <div class="d-flex align-items-center gap-3">
+                    {% if stat.user.photo %}
+                    <img src="{{ stat.user.photo.url }}" class="employee-photo rounded-circle">
+                    {% else %}
+                    <div class="employee-photo-placeholder rounded-circle">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h5 class="mb-0">{{ stat.user.get_full_name }}</h5>
+                        <p class="mb-0 text-primary fw-medium">{{ stat.user.poste_occupe }}</p>
+                    </div>
+                </div>
+            </div>
 
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script>
-document.getElementById('filter-form')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    const params = new URLSearchParams(formData);
-    window.location.search = params.toString();
-});
+            <!-- Corps de la carte -->
+            <div class="card-body">
+                
+<!-- Informations -->
+                <div class="card" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <table style="width: 100%; font-size: 0.9rem; border-collapse: collapse;">
+        <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 8px 0; color: #7f8c8d;">Statut:</td>
+            <td style="padding: 8px 0; font-weight: 500;">{{ stat.user.get_statut_display }}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 8px 0; color: #7f8c8d; width: 50%;">Fiche de poste:</td>
+            <td style="padding: 8px 0; font-weight: 500;">{{ stat.user.fiche_poste|default:"-" }}</td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 8px 0; color: #7f8c8d;">Téléphone:</td>
+            <td style="padding: 8px 0; font-weight: 500;">{{ stat.user.telephone_pro|default:"-" }}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 8px 0; color: #7f8c8d;">Quartier:</td>
+            <td style="padding: 8px 0; font-weight: 500;">{{ stat.user.quartier|default:"-" }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #7f8c8d;">Contact urgence:</td>
+            <td style="padding: 8px 0; font-weight: 500;">{{ stat.user.contact_urgence|default:"-" }}</td>
+        </tr>
+    </table>
+</div>
+            </div>
+            <!-- Pied de carte -->
+            <div class="card-footer bg-white border-0">
+                <a href="{% url 'historique-employe' stat.user.id %}" 
+                   class="btn btn-outline-primary w-100">
+                    <i class="bi bi-clock-history me-1"></i> Voir historique complet
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 
-function resizeCharts() {
-    const charts = document.querySelectorAll('.js-plotly-plot');
-    charts.forEach(chart => {
-        Plotly.Plots.resize(chart);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    resizeCharts();
-});
-
-window.addEventListener('resize', resizeCharts);
-</script>
-
+</div>
 {% endblock %}

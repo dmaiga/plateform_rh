@@ -21,6 +21,6 @@ urlpatterns = [
     path('supprimer_tache/<int:tache_id>/', views.supprimer_tache, name='supprimer-tache'),
     path('detail_fiche_poste/<int:fiche_id>/', views.detail_fiche_poste, name='detail-fiche-poste'),
     path('assign_fiche_poste/<int:user_id>/<int:fiche_id>/', views.assign_fiche_poste, name='assign-fiche-poste'),
-
+    path('changer-mot-de-passe/', views.change_password, name='change-password'),
 ]
 

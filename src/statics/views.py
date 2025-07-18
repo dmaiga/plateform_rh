@@ -20,11 +20,21 @@ from django.template.loader import render_to_string
 from xhtml2pdf import pisa  
 from authentication.models import User
 from django.contrib.auth import login, authenticate ,logout
-
+from django.contrib import messages
 
 def is_rh_or_admin(user):
     return user.is_authenticated and getattr(user, 'role', None) in ['admin', 'rh']
 
+def get_performance_class(percentage):
+    if percentage is None:
+        return 'no-data'
+    if percentage >= 90:
+        return 'excellent'
+    if percentage >= 70:
+        return 'good'
+    if percentage >= 50:
+        return 'average'
+    return 'poor'
 
 
 
@@ -375,3 +385,107 @@ def export_semaine(request, format, start_date_str):
         return response
 
     return HttpResponse("Format non supporté", status=400)
+
+# views.py
+@login_required
+@user_passes_test(is_rh_or_admin)
+def historique_user(request, user_id):
+    employe = get_object_or_404(User, id=user_id)
+    today = now().date()
+    semaines = []
+    
+    for i in range(4):  # 4 dernières semaines
+        start_of_week = today - timedelta(days=today.weekday(), weeks=i)
+        jours_semaine = [start_of_week + timedelta(days=j) for j in range(5)]  # Lundi à vendredi
+        
+        semaine_data = {
+            'start': start_of_week,
+            'end': start_of_week + timedelta(days=4),
+            'jours': [],
+            'moyenne': 0
+        }
+        
+        total_percentage = 0
+        
+        for jour in jours_semaine:
+            taches = TacheSelectionnee.objects.filter(
+                user=employe,
+                date_selection=jour,
+                is_done=True
+            ).select_related('tache__fiche_poste')
+            
+            done = taches.count()
+            percentage = min(round((done / 6) * 100), 100)  # 6 tâches = 100%
+            css_class = get_performance_class(percentage)
+            total_percentage += percentage
+            
+            semaine_data['jours'].append({
+                'date': jour,
+                'done': done,
+                'percentage': percentage,
+                'css_class': css_class,
+                'appreciation': get_appreciation(percentage)  # Nouvelle fonction
+            })
+        
+        semaine_data['moyenne'] = round(total_percentage / len(jours_semaine)) if jours_semaine else 0
+        semaines.append(semaine_data)
+    
+    context = {
+        'employe': employe,
+        'semaines': semaines,
+    }
+    return render(request, 'statics/historique_employe.html', context)
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def historique_detail_user(request, user_id, semaine, jour):
+    employe = get_object_or_404(User, id=user_id)
+    date_jour = datetime.strptime(jour, '%Y-%m-%d').date()
+    
+    taches = TacheSelectionnee.objects.filter(
+        user=employe,
+        date_selection=date_jour,
+        is_done=True
+    ).select_related('tache__fiche_poste')
+    
+    taches_done = taches.count()
+    pourcentage = min(round((taches_done / 6) * 100), 100)
+    css_class = get_performance_class(pourcentage)
+    appreciation = get_appreciation(pourcentage)
+    
+    context = {
+        'employe': employe,
+        'date_jour': date_jour,
+        'taches': taches,
+        'taches_done': taches_done,
+        'pourcentage': pourcentage,
+        'css_class': css_class,
+        'appreciation': appreciation,
+    }
+    return render(request, 'statics/historique_detail_user.html', context)
+
+
+def get_performance_class(percentage):
+    if percentage >= 90: return 'Excellent'
+    elif percentage >= 70: return 'Très bon'
+    elif percentage >= 50: return 'Satisfaisant'
+    else: return 'insuffissant'
+
+def get_appreciation(percentage):
+    if percentage >= 90: return 'Excellent'
+    elif percentage >= 70: return 'Très bon'
+    elif percentage >= 50: return 'Satisfaisant'
+    elif percentage >= 30: return 'Insuffisant'
+    else: return 'Médiocre'
+
+@login_required
+@user_passes_test(is_rh_or_admin)
+def commentaire_tache(request, tache_id):
+    tache = get_object_or_404(TacheSelectionnee, id=tache_id)
+    if request.method == 'POST':
+        commentaire = request.POST.get('commentaire', '').strip()
+        if commentaire:
+            tache.commentaire_rh = commentaire
+            tache.save()
+            messages.success(request, "💬 Commentaire ajouté à la tâche.")
+    return redirect('historique-employe', user_id=tache.user.id)

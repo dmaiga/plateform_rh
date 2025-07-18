@@ -99,7 +99,7 @@
                 </td>
                 <td>{{ t.duree_active|format_timedelta }}</td>
                 <td>
-                    {% if t.commentaire_rh %}<div><strong>RH :</strong> {{ t.commentaire_rh }}</div>{% endif %}
+                    {% if t.commentaire_rh %}<div>{{ t.commentaire_rh }}</div>{% endif %}
                     {% if t.tache.commentaire_rh %}<div><strong>RH général :</strong> {{ t.tache.commentaire_rh }}</div>{% endif %}
                     {% if t.commentaire_employe %}<div><strong>Employé :</strong> {{ t.commentaire_employe }}</div>{% endif %}
                 </td>

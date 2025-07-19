@@ -1,0 +1,334 @@
+{% extends 'site_web/layout.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5">
+  <div class="container py-5">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4 text-dark">Votre excellence RH, notre passion</h1>
+        <p class="lead mb-4 text-muted">Solutions intégrées pour les entreprises ambitieuses et les talents déterminés</p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="#entreprise" class="btn btn-dark btn-lg px-4">
+            <i class="bi bi-building me-2"></i>Espace Employeur
+          </a>
+          <a href="#candidat" class="btn btn-outline-dark btn-lg px-4">
+            <i class="bi bi-person-vcard me-2"></i>Espace Candidat
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-6 d-none d-lg-block">
+        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Équipe professionnelle" class="img-fluid rounded-3 shadow">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dual Content Grid -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Entreprises -->
+      <div class="col-lg-6" id="entreprise">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-5">
+            <div class="badge bg-dark text-white mb-3">Pour les entreprises</div>
+            <h2 class="mb-4">Optimisez votre capital humain</h2>
+            <ul class="list-unstyled mb-4">
+              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Recrutement sur-mesure</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Gestion administrative externalisée</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Études salariales sectorielles</li>
+            </ul>
+            <a href="#" class="btn btn-outline-dark">Découvrir nos services RH</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Candidats -->
+      <div class="col-lg-6" id="candidat">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-5">
+            <div class="badge bg-dark text-white mb-3">Pour les candidats</div>
+            <h2 class="mb-4">Décrochez l'opportunité idéale</h2>
+            <ul class="list-unstyled mb-4">
+              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Offres exclusives</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Coaching personnalisé</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Accès à notre réseau d'employeurs</li>
+            </ul>
+            <a href="#" class="btn btn-outline-dark">Explorer les offres</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Valeurs Clés -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="text-center p-4">
+          <div class="icon-circle mb-3 mx-auto">
+            <i class="bi bi-shield-check fs-3"></i>
+          </div>
+          <h3>Fiabilité</h3>
+          <p class="text-muted">Engagements contractuels strictement respectés</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center p-4">
+          <div class="icon-circle mb-3 mx-auto">
+            <i class="bi bi-geo-alt fs-3"></i>
+          </div>
+          <h3>Expertise locale</h3>
+          <p class="text-muted">Connaissance approfondie des marchés ouest-africains</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center p-4">
+          <div class="icon-circle mb-3 mx-auto">
+            <i class="bi bi-lightbulb fs-3"></i>
+          </div>
+          <h3>Innovation</h3>
+          <p class="text-muted">Solutions digitales pour une gestion RH moderne</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Partenaires -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">Nos partenaires stratégiques</h2>
+    <div class="row g-4 align-items-center justify-content-center">
+      <div class="col-6 col-md-3 col-lg-2 text-center">
+        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=SONATEL" alt="SONATEL" class="img-fluid partner-logo">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2 text-center">
+        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=ORANGE" alt="Orange" class="img-fluid partner-logo">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2 text-center">
+        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=ECOBANK" alt="Ecobank" class="img-fluid partner-logo">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2 text-center">
+        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=MTN" alt="MTN" class="img-fluid partner-logo">
+      </div>
+      <div class="col-6 col-md-3 col-lg-2 text-center">
+        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=BAO" alt="Bank of Africa" class="img-fluid partner-logo">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Processus Visuel -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">Notre approche en 3 étapes</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="step-card text-center">
+          <div class="step-number">1</div>
+          <h3 class="h4 mt-3">Diagnostic</h3>
+          <p class="text-muted">Analyse approfondie de vos besoins spécifiques</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="step-card text-center">
+          <div class="step-number">2</div>
+          <h3 class="h4 mt-3">Solution sur-mesure</h3>
+          <p class="text-muted">Développement d'une stratégie adaptée</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="step-card text-center">
+          <div class="step-number">3</div>
+          <h3 class="h4 mt-3">Suivi rigoureux</h3>
+          <p class="text-muted">Évaluation continue et ajustements</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Offres Vedettes -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+      <h2 class="mb-0">Opportunités récentes</h2>
+      <a href="#" class="btn btn-link text-dark">
+        Voir toutes <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card job-card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <span class="badge bg-success mb-2">Nouveau</span>
+            <h3 class="h5">Responsable Logistique</h3>
+            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Bamako, Mali</p>
+            <p class="small mb-3">CDI dans le secteur minier avec avantages compétitifs</p>
+            <a href="#" class="btn btn-sm btn-dark">Postuler</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card job-card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <span class="badge bg-warning text-dark mb-2">Urgent</span>
+            <h3 class="h5">Développeur Fullstack</h3>
+            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Dakar, Sénégal</p>
+            <p class="small mb-3">Contrat 12 mois renouvelable, télétravail partiel</p>
+            <a href="#" class="btn btn-sm btn-dark">Postuler</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card job-card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <span class="badge bg-info text-dark mb-2">Freelance</span>
+            <h3 class="h5">Expert Comptable</h3>
+            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Abidjan, Côte d'Ivoire</p>
+            <p class="small mb-3">Mission de 6 mois pour audit financier</p>
+            <a href="#" class="btn btn-sm btn-dark">Postuler</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Témoignages -->
+<section class="py-5 bg-dark text-white">
+  <div class="container">
+    <h2 class="text-center mb-5">Ils nous font confiance</h2>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="testimonial-card p-4 h-100">
+          <div class="d-flex align-items-center mb-4">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Mohamed K." class="rounded-circle me-3" width="60">
+            <div>
+              <h5 class="mb-0">Mohamed K.</h5>
+              <p class="text-muted small mb-0">Directeur Financier</p>
+            </div>
+          </div>
+          <p class="lead">"Leur compréhension des enjeux locaux a fait la différence dans notre recrutement de cadres dirigeants."</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="testimonial-card p-4 h-100">
+          <div class="d-flex align-items-center mb-4">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Aminata D." class="rounded-circle me-3" width="60">
+            <div>
+              <h5 class="mb-0">Aminata D.</h5>
+              <p class="text-muted small mb-0">Ingénieure Logiciel</p>
+            </div>
+          </div>
+          <p class="lead">"Grâce à leur coaching, j'ai décroché un poste à 40% mieux rémunéré que mon précédent emploi."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Final -->
+<section class="py-5">
+  <div class="container text-center py-4">
+    <h2 class="fw-bold mb-4">Prêt à élever votre expérience RH ?</h2>
+    <div class="d-flex justify-content-center gap-3">
+      <a href="#" class="btn btn-dark btn-lg px-5">
+        <i class="bi bi-chat-left-text me-2"></i>Parler à un expert
+      </a>
+      <a href="#" class="btn btn-outline-dark btn-lg px-5">
+        <i class="bi bi-search me-2"></i>Rechercher des offres
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Design System Minimaliste */
+  :root {
+    --dark: #2c3e50;
+    --light: #f8f9fa;
+    --border: #e9ecef;
+    --success: #2ecc71;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #495057;
+  }
+  
+  .hero-section {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .icon-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .partner-logo {
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    padding: 1rem;
+  }
+  
+  .partner-logo:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+  
+  .step-card {
+    position: relative;
+    padding: 2rem 1rem;
+  }
+  
+  .step-number {
+    width: 50px;
+    height: 50px;
+    background-color: var(--dark);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 0 auto;
+  }
+  
+  .job-card {
+    transition: transform 0.3s ease;
+  }
+  
+  .job-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .testimonial-card {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 8px;
+  }
+  
+  .btn {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  
+  .badge {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 6px 12px;
+  }
+</style>
+{% endblock %}

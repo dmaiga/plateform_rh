@@ -24,6 +24,7 @@ import documents.views
 import notes.views
 import todo.views
 import statics.views
+import site_web.views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', authentication.views.login_page, name='login'),
@@ -33,6 +34,7 @@ urlpatterns = [
     path('notes/', include('notes.urls')),
     path('todo/', include('todo.urls')),
     path('statics/', include('statics.urls')),
+    path('antares-rh/', include('site_web.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:

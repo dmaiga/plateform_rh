@@ -100,7 +100,7 @@ def historique_par_mois(request):
                 note = "Aucune tâche"
                 badge_class = "bg-secondary"
             else:
-                pourcentage = round((terminees / total) * 100)
+                pourcentage = round((terminees / 6) * 100)
                 
                 # Évaluation qualitative basée sur 6 tâches max
                 if terminees >= 6:

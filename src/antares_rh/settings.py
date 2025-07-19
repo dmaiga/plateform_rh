@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'channels',
     'todo',
     'statics',
+    'site_web',
     
 ]
 

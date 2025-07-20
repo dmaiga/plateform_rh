@@ -1,61 +1,81 @@
 {% extends 'site_web/layout.html' %}
+{% load static %}
 
 {% block content %}
+
 <!-- Hero Section -->
-<section class="hero-section py-5">
-  <div class="container py-5">
+<section class="hero-section py-3">
+  <div class="container py-3">
     <div class="row align-items-center">
-      <div class="col-lg-6">
-        <h1 class="display-4 fw-bold mb-4 text-dark">Votre excellence RH, notre passion</h1>
-        <p class="lead mb-4 text-muted">Solutions intégrées pour les entreprises ambitieuses et les talents déterminés</p>
-        <div class="d-flex flex-wrap gap-3">
-          <a href="#entreprise" class="btn btn-dark btn-lg px-4">
+      <div class="col-lg-6 order-lg-1 order-2 mt-3 mt-lg-0">
+        <h1 class="fw-bold mb-3 fs-2" style="color: var(--primary-blue);">
+          Antares RH : Au service des talents et des organisations
+        </h1>
+        <p class="lead mb-2" style="color: var(--secondary-blue);">
+          Cabinet spécialisé en gestion des ressources humaines et en organisation des entreprises.
+          Nous connectons les talents aux entreprises pour bâtir des équipes performantes, 
+          fondées sur la collaboration, la confiance et le respect de l’humain. <br>
+          <span style="text-decoration: underline; color: var(--accent-orange); font-weight: bold;">Notre mission</span> :
+          accompagner les entreprises, les professionnels, les chercheurs d’emploi et les partenaires tout au long 
+          de leur parcours de croissance.
+        </p>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a href="#entreprise" class="btn btn-primary btn-lg px-3" style="background-color: var(--accent-orange); border-color: var(--accent-orange);">
             <i class="bi bi-building me-2"></i>Espace Employeur
           </a>
-          <a href="#candidat" class="btn btn-outline-dark btn-lg px-4">
+          <a href="#candidat" class="btn btn-outline-primary btn-lg px-3" style="border-color: var(--primary-blue); color: var(--primary-blue);">
             <i class="bi bi-person-vcard me-2"></i>Espace Candidat
           </a>
         </div>
       </div>
-      <div class="col-lg-6 d-none d-lg-block">
-        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Équipe professionnelle" class="img-fluid rounded-3 shadow">
+
+      <!-- Image à cacher sur mobile -->
+      <div class="col-lg-6 order-lg-2 order-1 hero-img-mobile">
+        <img src="{% static 'site_web/images/hero/hero-team.jpg' %}" 
+             alt="Équipe professionnelle" 
+             class="img-fluid rounded-3 shadow-sm">
       </div>
     </div>
   </div>
 </section>
 
-<!-- Dual Content Grid -->
-<section class="py-5 bg-light">
+<!-- Dual Content Grid - Version enrichie -->
+<section class="dual-grid-section py-5 bg-light">
   <div class="container">
     <div class="row g-4">
-      <!-- Entreprises -->
+      <!-- Entreprise -->
       <div class="col-lg-6" id="entreprise">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-body p-5">
-            <div class="badge bg-dark text-white mb-3">Pour les entreprises</div>
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body p-4 p-lg-5" style="background-color: var(--primary-blue); color: white;">
+            <div class="badge mb-3" style="background-color: var(--accent-orange);">Pour les entreprises</div>
             <h2 class="mb-4">Optimisez votre capital humain</h2>
             <ul class="list-unstyled mb-4">
-              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Recrutement sur-mesure</li>
-              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Gestion administrative externalisée</li>
-              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Études salariales sectorielles</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Recrutement ciblé et rapide</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Personnel intérimaire disponible</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Externalisation RH complète</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Évaluation & audit social personnalisés</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Réactivité, conformité & réseau local/international</li>
             </ul>
-            <a href="#" class="btn btn-outline-dark">Découvrir nos services RH</a>
+            <a href="{% url 'services' %}" class="btn btn-outline-light">Découvrir nos services RH</a>
           </div>
         </div>
       </div>
       
-      <!-- Candidats -->
+      <!-- Candidat -->
       <div class="col-lg-6" id="candidat">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-body p-5">
-            <div class="badge bg-dark text-white mb-3">Pour les candidats</div>
-            <h2 class="mb-4">Décrochez l'opportunité idéale</h2>
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body p-4 p-lg-5" style="background-color: white;">
+            <div class="badge mb-3" style="background-color: var(--primary-blue); color: white;">Pour les candidats</div>
+            <h2 class="mb-4" style="color: var(--primary-blue);">Décrochez l'opportunité idéale</h2>
             <ul class="list-unstyled mb-4">
-              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Offres exclusives</li>
-              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Coaching personnalisé</li>
-              <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Accès à notre réseau d'employeurs</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Offres exclusives & ciblées</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Coaching personnalisé & suivi</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Accès à un large réseau d’entreprises</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Formations adaptées à votre profil</li>
+              <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Accompagnement administratif et social</li>
             </ul>
-            <a href="#" class="btn btn-outline-dark">Explorer les offres</a>
+            <a href="#" class="btn btn-outline-primary" style="border-color: var(--primary-blue); color: var(--primary-blue);">Explorer les offres</a>
           </div>
         </div>
       </div>
@@ -63,166 +83,179 @@
   </div>
 </section>
 
-<!-- Valeurs Clés -->
-<section class="py-5 bg-light">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="text-center p-4">
-          <div class="icon-circle mb-3 mx-auto">
-            <i class="bi bi-shield-check fs-3"></i>
-          </div>
-          <h3>Fiabilité</h3>
-          <p class="text-muted">Engagements contractuels strictement respectés</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="text-center p-4">
-          <div class="icon-circle mb-3 mx-auto">
-            <i class="bi bi-geo-alt fs-3"></i>
-          </div>
-          <h3>Expertise locale</h3>
-          <p class="text-muted">Connaissance approfondie des marchés ouest-africains</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="text-center p-4">
-          <div class="icon-circle mb-3 mx-auto">
-            <i class="bi bi-lightbulb fs-3"></i>
-          </div>
-          <h3>Innovation</h3>
-          <p class="text-muted">Solutions digitales pour une gestion RH moderne</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Section Partenaires -->
-<section class="py-5">
-  <div class="container">
-    <h2 class="text-center mb-5">Nos partenaires stratégiques</h2>
-    <div class="row g-4 align-items-center justify-content-center">
-      <div class="col-6 col-md-3 col-lg-2 text-center">
-        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=SONATEL" alt="SONATEL" class="img-fluid partner-logo">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2 text-center">
-        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=ORANGE" alt="Orange" class="img-fluid partner-logo">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2 text-center">
-        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=ECOBANK" alt="Ecobank" class="img-fluid partner-logo">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2 text-center">
-        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=MTN" alt="MTN" class="img-fluid partner-logo">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2 text-center">
-        <img src="https://via.placeholder.com/150x80/2c3e50/ffffff?text=BAO" alt="Bank of Africa" class="img-fluid partner-logo">
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Processus Visuel -->
-<section class="py-5">
-  <div class="container">
-    <h2 class="text-center mb-5">Notre approche en 3 étapes</h2>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="step-card text-center">
-          <div class="step-number">1</div>
-          <h3 class="h4 mt-3">Diagnostic</h3>
-          <p class="text-muted">Analyse approfondie de vos besoins spécifiques</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="step-card text-center">
-          <div class="step-number">2</div>
-          <h3 class="h4 mt-3">Solution sur-mesure</h3>
-          <p class="text-muted">Développement d'une stratégie adaptée</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="step-card text-center">
-          <div class="step-number">3</div>
-          <h3 class="h4 mt-3">Suivi rigoureux</h3>
-          <p class="text-muted">Évaluation continue et ajustements</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Offres Vedettes -->
-<section class="py-5 bg-light">
+<!-- Offres d'emploi -->
+<section class="jobs-section py-5" style="background-color: #F4F4F9;">
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-5">
-      <h2 class="mb-0">Opportunités récentes</h2>
-      <a href="#" class="btn btn-link text-dark">
+      <h2 class="mb-0" style="color: #0D3B66;">Nos dernières opportunités</h2>
+      <a href="#" class="btn btn-link" style="color: #F46036;">
         Voir toutes <i class="bi bi-arrow-right ms-2"></i>
       </a>
     </div>
     <div class="row g-4">
       <div class="col-md-4">
-        <div class="card job-card h-100 border-0 shadow-sm">
+        <div class="card h-100 border-0 shadow-sm">
           <div class="card-body">
-            <span class="badge bg-success mb-2">Nouveau</span>
-            <h3 class="h5">Responsable Logistique</h3>
+            <span class="badge mb-2" style="background-color: #2D76B6; color: white;">Nouveau</span>
+            <h3 class="h5" style="color: #0D3B66;">Responsable Logistique</h3>
             <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Bamako, Mali</p>
             <p class="small mb-3">CDI dans le secteur minier avec avantages compétitifs</p>
-            <a href="#" class="btn btn-sm btn-dark">Postuler</a>
+            <a href="#" class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
+          </div>
+        </div>
+      </div>
+      <!-- Ajouter 2 autres offres similaires -->
+       <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <span class="badge mb-2" style="background-color: #2D76B6; color: white;">Nouveau</span>
+            <h3 class="h5" style="color: #0D3B66;">Développeur Fullstack</h3>
+            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Bamako, Mali</p>
+            <p class="small mb-3">Contrat 12 mois renouvelable</p>
+            <a href="#" class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
           </div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="card job-card h-100 border-0 shadow-sm">
+        <div class="card h-100 border-0 shadow-sm">
           <div class="card-body">
-            <span class="badge bg-warning text-dark mb-2">Urgent</span>
-            <h3 class="h5">Développeur Fullstack</h3>
-            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Dakar, Sénégal</p>
-            <p class="small mb-3">Contrat 12 mois renouvelable, télétravail partiel</p>
-            <a href="#" class="btn btn-sm btn-dark">Postuler</a>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card job-card h-100 border-0 shadow-sm">
-          <div class="card-body">
-            <span class="badge bg-info text-dark mb-2">Freelance</span>
-            <h3 class="h5">Expert Comptable</h3>
-            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Abidjan, Côte d'Ivoire</p>
+            <span class="badge mb-2" style="background-color: #2D76B6; color: white;">Nouveau</span>
+            <h3 class="h5" style="color: #0D3B66;">Expert Comptablee</h3>
+            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Bamako, Mali</p>
             <p class="small mb-3">Mission de 6 mois pour audit financier</p>
-            <a href="#" class="btn btn-sm btn-dark">Postuler</a>
+            <a href="#" class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Valeurs -->
+<section class="values-section py-3" style="background-color: #FFFFFF;">
+  <div class="container">
+    <h2 class="text-center mb-3" style="color: #0D3B66;">Notre ADN à Antares</h2>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="value-card text-center p-3 h-100">
+          <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13,59,102,0.1);">
+            <i class="bi bi-shield-check fs-3" style="color: #0D3B66;">1</i>
+          </div>
+          <h3 style="color: #0D3B66;">Fiabilité</h3>
+          <p class="text-muted">Engagements contractuels strictement respectés</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="value-card text-center p-3 h-100">
+          <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13,59,102,0.1);">
+            <i class="bi bi-geo-alt fs-3" style="color: #0D3B66;">2</i>
+          </div>
+          <h3 style="color: #0D3B66;">Expertise locale</h3>
+          <p class="text-muted">Connaissance approfondie des marchés africains</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="value-card text-center p-3 h-100">
+          <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13,59,102,0.1);">
+            <i class="bi bi-lightbulb fs-3" style="color: #0D3B66;">3</i>
+          </div>
+          <h3 style="color: #0D3B66;">Innovation</h3>
+          <p class="text-muted">Solutions digitales pour une gestion RH moderne</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="value-card text-center p-3 h-100">
+          <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13,59,102,0.1);">
+            <i class="bi bi-people fs-3" style="color: #0D3B66;">4</i>
+          </div>
+          <h3 style="color: #0D3B66;">Proximité</h3>
+          <p class="text-muted">Relation personnalisée avec chaque client</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Carrousel Partenaires -->
+<section class="partners-section bg-"style="background-color: #F4F4F9;">
+  <div class="container-fluid px-0">
+        <h3 class="h5 text-center text-muted ">Ils nous font confiance</h3>
+    <div class="splide" id="partners-slider">
+      <div class="splide__track">
+        <ul class="splide__list">
+          <li class="splide__slide">
+            <div class="partner-item">
+              <img src="{% static 'site_web/images/partenaires/bama.png' %}" alt="Bama" class="img-fluid">
+            </div>
+          </li>
+          <li class="splide__slide">
+            <div class="partner-item">
+              <img src="{% static 'site_web/images/partenaires/cmm.jpg' %}" alt="Ciments et Matériaux du Mali" class="img-fluid">
+            </div>
+          </li>
+          <li class="splide__slide">
+            <div class="partner-item">
+              <img src="{% static 'site_web/images/partenaires/gino.jpg' %}" alt="Gino" class="img-fluid">
+            </div>
+          </li>
+          <li class="splide__slide">
+            <div class="partner-item">
+              <img src="{% static 'site_web/images/partenaires/jago.jpg' %}" alt="Jago" class="img-fluid">
+            </div>
+          </li>
+          <li class="splide__slide">
+            <div class="partner-item">
+              <img src="{% static 'site_web/images/partenaires/Sonavie.png' %}" alt="Sonavie" class="img-fluid">
+            </div>
+          </li>
+          <li class="splide__slide">
+            <div class="partner-item">
+              <img src="{% static 'site_web/images/partenaires/jumbo.png' %}" alt="Jumbo" class="img-fluid">
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Témoignages -->
-<section class="py-5 bg-dark text-white">
+<section class="testimonials-section py-5" style="background-color: #0D3B66; color: white;">
   <div class="container">
     <h2 class="text-center mb-5">Ils nous font confiance</h2>
     <div class="row g-4">
-      <div class="col-md-6">
-        <div class="testimonial-card p-4 h-100">
+      <div class="col-md-4">
+        <div class="testimonial-card p-4 h-100" style="background-color: rgba(255,255,255,0.1); border-radius: 8px;">
           <div class="d-flex align-items-center mb-4">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Mohamed K." class="rounded-circle me-3" width="60">
-            <div>
+            <img src="{% static 'site_web/images/profil/pro_user5.jpg' %}" alt="Mohamed K." class="rounded-circle me-3" width="60">
+          <div>
               <h5 class="mb-0">Mohamed K.</h5>
-              <p class="text-muted small mb-0">Directeur Financier</p>
+              <p class="small mb-0" style="color: rgba(255,255,255,0.7);">Directeur Financier</p>
             </div>
           </div>
           <p class="lead">"Leur compréhension des enjeux locaux a fait la différence dans notre recrutement de cadres dirigeants."</p>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="testimonial-card p-4 h-100">
+      <div class="col-md-4">
+        <div class="testimonial-card p-4 h-100" style="background-color: rgba(255,255,255,0.1); border-radius: 8px;">
           <div class="d-flex align-items-center mb-4">
-            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Aminata D." class="rounded-circle me-3" width="60">
+            <img src="{% static 'site_web/images/profil/pro_user1.jpg' %}" alt="Salif M." class="rounded-circle me-3" width="60">
+          <div>
+              <h5 class="mb-0">Salif M.</h5>
+              <p class="small mb-0" style="color: rgba(255,255,255,0.7);">Entrepreneur</p>
+            </div>
+          </div>
+          <p class="lead">"Antares nous a aidé à etre plus efficient."</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="testimonial-card p-4 h-100" style="background-color: rgba(255,255,255,0.1); border-radius: 8px;">
+          <div class="d-flex align-items-center mb-4">
+            <img src="{% static 'site_web/images/profil/pro_user42.jpg' %}" alt="Aminata D." class="rounded-circle me-3" width="60">
             <div>
               <h5 class="mb-0">Aminata D.</h5>
-              <p class="text-muted small mb-0">Ingénieure Logiciel</p>
+              <p class="small mb-0" style="color: rgba(255,255,255,0.7);">Ingénieure Logiciel</p>
             </div>
           </div>
           <p class="lead">"Grâce à leur coaching, j'ai décroché un poste à 40% mieux rémunéré que mon précédent emploi."</p>
@@ -233,102 +266,172 @@
 </section>
 
 <!-- CTA Final -->
-<section class="py-5">
+<section class="cta-section " style="background-color: #F46036; color: white;">
   <div class="container text-center py-4">
-    <h2 class="fw-bold mb-4">Prêt à élever votre expérience RH ?</h2>
+    <h2 class="fw-bold">Prêt à transformer votre expérience RH ?</h2>
     <div class="d-flex justify-content-center gap-3">
-      <a href="#" class="btn btn-dark btn-lg px-5">
+      <a href="#" class="btn btn-light btn-lg px-5" style="color: #F46036;">
         <i class="bi bi-chat-left-text me-2"></i>Parler à un expert
       </a>
-      <a href="#" class="btn btn-outline-dark btn-lg px-5">
+      <a href="#" class="btn btn-outline-light btn-lg px-5">
         <i class="bi bi-search me-2"></i>Rechercher des offres
       </a>
     </div>
   </div>
 </section>
 
+<!-- Splide JS et CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+
 <style>
-  /* Design System Minimaliste */
-  :root {
-    --dark: #2c3e50;
-    --light: #f8f9fa;
-    --border: #e9ecef;
-    --success: #2ecc71;
-  }
   
-  body {
-    font-family: 'Inter', sans-serif;
-    color: #495057;
-  }
-  
+  /* Styles spécifiques pour index.html */
   .hero-section {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--light-gray) 0%, white 100%);
   }
   
+  .partners-section {
+    border-top: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .partner-item {
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+  }
+  
+  .partner-item img {
+    max-height: 60px;
+    width: auto;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .partner-item:hover img {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  
+  .dual-grid-section {
+    background: linear-gradient(to bottom, var(--light-gray) 0%, white 100%);
+  }
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  /* Styles généraux */
   .icon-circle {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   }
   
-  .partner-logo {
-    filter: grayscale(100%);
-    opacity: 0.7;
-    transition: all 0.3s ease;
-    padding: 1rem;
-  }
-  
-  .partner-logo:hover {
-    filter: grayscale(0%);
-    opacity: 1;
-  }
-  
-  .step-card {
-    position: relative;
-    padding: 2rem 1rem;
-  }
-  
-  .step-number {
-    width: 50px;
-    height: 50px;
-    background-color: var(--dark);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    margin: 0 auto;
-  }
-  
-  .job-card {
+  .value-card {
     transition: transform 0.3s ease;
   }
   
-  .job-card:hover {
+  .value-card:hover {
     transform: translateY(-5px);
   }
   
-  .testimonial-card {
-    background-color: rgba(255,255,255,0.1);
-    border-radius: 8px;
+  
+  /* Dual Grid Section */
+  .dual-grid-container {
+    display: flex;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   }
   
-  .btn {
-    font-weight: 500;
-    letter-spacing: 0.5px;
+  .grid-item {
+    flex: 1;
+    padding: 3rem;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
   }
   
-  .badge {
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    padding: 6px 12px;
+  .enterprise-card {
+    clip-path: polygon(0 0, 100% 0, 60% 100%, 0% 100%);
+  }
+  
+  .candidate-card {
+    clip-path: polygon(40% 0, 100% 0, 100% 100%, 0% 100%);
+    margin-left: -20%;
+  }
+  
+  .grid-item:hover {
+    flex: 1.8;
+    z-index: 2;
+  }
+  
+  .grid-item .card-content {
+    max-width: 400px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 992px) {
+    .dual-grid-container {
+      flex-direction: column;
+      height: auto;
+    }
+    
+    .enterprise-card, 
+    .candidate-card {
+      clip-path: none;
+      margin-left: 0;
+    }
+    
+    .grid-item:hover {
+      flex: 1;
+    }
+    .hero-section h1 {
+    font-size: 1.3rem !important;
+  }
+
+  .hero-section p.lead {
+    font-size: 0.95rem !important;
+  }
+
+  .hero-img-mobile {
+    display: none !important;
+  }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    new Splide('#partners-slider', {
+      type: 'loop',
+      perPage: 5,
+      perMove: 1,
+      autoplay: true,
+      interval: 3000,
+      speed: 600,
+      pauseOnHover: true,
+      arrows: false,
+      pagination: false,
+      breakpoints: {
+        1200: { perPage: 4 },
+        992: { perPage: 3 },
+        768: { perPage: 2 },
+        576: { perPage: 1 }
+      }
+    }).mount();
+  });
+</script>
 {% endblock %}

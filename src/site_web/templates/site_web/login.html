@@ -1,0 +1,225 @@
+{% extends 'site_web/layout.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section Login -->
+<section class="login-hero py-5" style="background: linear-gradient(rgba(13, 59, 102, 0.9), rgba(13, 59, 102, 0.9)) ">
+  <div class="container py-5 text-white text-center">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h1 class="display-4 fw-bold mb-4">Connectez-vous</h1>
+        <p class="lead">Accédez à votre espace personnel selon votre profil</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Login Tabs Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs nav-fill mb-4" id="loginTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="jobseeker-tab" data-bs-toggle="tab" data-bs-target="#jobseeker" type="button" role="tab">
+              <i class="bi bi-person-badge me-2"></i> Demandeur d'emploi
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab">
+              <i class="bi bi-building me-2"></i> Entreprise
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employee" type="button" role="tab">
+              <i class="bi bi-person-vcard me-2"></i> Salarié
+            </button>
+          </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content bg-white p-4 rounded-bottom shadow-sm" id="loginTabsContent">
+          <!-- Demandeur d'emploi Tab -->
+          <div class="tab-pane fade show active" id="jobseeker" role="tabpanel">
+            <h3 class="mb-4 text-center" style="color: var(--primary-blue);">Espace Demandeur d'emploi</h3>
+            <form>
+              <div class="mb-3">
+                <label for="jobseeker-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="jobseeker-email" placeholder="votre@email.com">
+              </div>
+              <div class="mb-3">
+                <label for="jobseeker-password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="jobseeker-password" placeholder="Votre mot de passe">
+              </div>
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="jobseeker-remember">
+                <label class="form-check-label" for="jobseeker-remember">Se souvenir de moi</label>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+              </button>
+              <div class="text-center">
+                <a href="#forgot-password" class="text-muted small">Mot de passe oublié ?</a>
+              </div>
+            </form>
+            
+            <div class="mt-4 pt-3 border-top text-center">
+              <p class="mb-2">Pas encore de compte ?</p>
+              <a href="#register-jobseeker.html" class="btn btn-outline-primary">
+                <i class="bi bi-person-plus me-2"></i> Créer un compte demandeur
+              </a>
+            </div>
+          </div>
+          
+          <!-- Entreprise Tab -->
+          <div class="tab-pane fade" id="company" role="tabpanel">
+            <h3 class="mb-4 text-center" style="color: var(--primary-blue);">Espace Entreprise</h3>
+            <form>
+              <div class="mb-3">
+                <label for="company-email" class="form-label">Email professionnel</label>
+                <input type="email" class="form-control" id="company-email" placeholder="contact@votreentreprise.com">
+              </div>
+              <div class="mb-3">
+                <label for="company-password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="company-password" placeholder="Votre mot de passe">
+              </div>
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="company-remember">
+                <label class="form-check-label" for="company-remember">Se souvenir de moi</label>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+              </button>
+              <div class="text-center">
+                <a href="#forgot-password" class="text-muted small">Mot de passe oublié ?</a>
+              </div>
+            </form>
+            
+            <div class="mt-4 pt-3 border-top text-center">
+              <p class="mb-2">Votre entreprise n'est pas encore inscrite ?</p>
+              <a href="#register-company.html" class="btn btn-outline-primary">
+                <i class="bi bi-building-add me-2"></i> Créer un compte entreprise
+              </a>
+            </div>
+          </div>
+          
+          <!-- Salarié Tab -->
+          <div class="tab-pane fade" id="employee" role="tabpanel">
+            <h3 class="mb-4 text-center" style="color: var(--primary-blue);">Espace Salarié</h3>
+            <form>
+              <div class="mb-3">
+                <label for="employee-email" class="form-label">Email professionnel</label>
+                <input type="email" class="form-control" id="employee-email" placeholder="prenom.nom@entreprise.com">
+              </div>
+              <div class="mb-3">
+                <label for="employee-password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="employee-password" placeholder="Votre mot de passe">
+              </div>
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="employee-remember">
+                <label class="form-check-label" for="employee-remember">Se souvenir de moi</label>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+              </button>
+              <div class="text-center">
+                <a href="#forgot-password" class="text-muted small">Mot de passe oublié ?</a>
+              </div>
+            </form>
+            
+            <div class="mt-4 pt-3 border-top text-center">
+              <p class="mb-2">Pas encore de compte salarié ?</p>
+              <a href="#register-employee.html" class="btn btn-outline-primary">
+                <i class="bi bi-person-vcard me-2"></i> Activer mon compte
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Additional Help Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h3 class="mb-4" style="color: var(--primary-blue);">Besoin d'aide pour vous connecter ?</h3>
+        <div class="row g-4 mt-3">
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <i class="bi bi-question-circle fs-1 mb-3" style="color: var(--accent-orange);"></i>
+                <h5>Centre d'aide</h5>
+                <p>Consultez notre FAQ pour trouver des réponses</p>
+                <a href="#help.html" class="btn btn-outline-primary btn-sm">Accéder</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <i class="bi bi-envelope fs-1 mb-3" style="color: var(--accent-orange);"></i>
+                <h5>Support email</h5>
+                <p>Contactez notre support technique par email</p>
+                <a href="mailto:support@antares-rh.com" class="btn btn-outline-primary btn-sm">Nous écrire</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <i class="bi bi-telephone fs-1 mb-3" style="color: var(--accent-orange);"></i>
+                <h5>Assistance téléphonique</h5>
+                <p>Appelez-nous du lundi au vendredi</p>
+                <a href="tel:+22320292040" class="btn btn-outline-primary btn-sm">+223 20 29 20 40</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .login-hero {
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-tabs .nav-link {
+    color: var(--primary-blue);
+    padding: 1rem;
+    border-bottom: 3px solid transparent;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: var(--accent-orange);
+    background-color: transparent;
+    border-color: transparent transparent var(--accent-orange) transparent;
+    font-weight: 500;
+  }
+  
+  .nav-tabs .nav-link:hover:not(.active) {
+    border-color: transparent transparent #dee2e6 transparent;
+  }
+  
+  .tab-content {
+    border: 1px solid #dee2e6;
+    border-top: none;
+  }
+  
+  @media (max-width: 767.98px) {
+    .nav-tabs .nav-link {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+{% endblock %}

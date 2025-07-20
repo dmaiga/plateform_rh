@@ -17,3 +17,6 @@ def jobs(request):
 
 def contact(request):
     return render(request, 'site_web/contact.html')
+
+def login(request):
+    return render(request, 'site_web/login.html')

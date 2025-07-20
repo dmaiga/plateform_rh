@@ -1,0 +1,573 @@
+{% extends 'site_web/layout.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section Services -->
+<section class="services-hero py-5" style="background: linear-gradient(rgba(13, 59, 102, 0.9), rgba(13, 59, 102, 0.9)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;">  <div class="container py-5 text-white text-center">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h1 class="display-4 fw-bold mb-4">Nos Services RH</h1>
+        <p class="lead mb-5">Des solutions sur mesure pour répondre à tous vos défis en gestion des talents</p>
+        <a href="#contact" class="btn btn-light btn-lg px-5 me-3" style="color: #F46036;">
+          <i class="bi bi-chat-left-text me-2"></i>Demander un devis
+        </a>
+        <a href="#nos-services" class="btn btn-outline-light btn-lg px-5">
+          <i class="bi bi-arrow-down me-2"></i>Découvrir nos services
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Overview -->
+<section id="nos-services" class="py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto text-center mb-5">
+        <h2 class="mb-3" style="color: var(--primary-blue);">Nos domaines d'expertise</h2>
+        <p class="lead">Une gamme complète de services RH pour accompagner votre croissance</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13, 59, 102, 0.1);">
+              <i class="bi bi-person-plus fs-3" style="color: var(--primary-blue);"></i>
+            </div>
+            <h4>Recrutement</h4>
+            <p class="mb-4">Trouvez les talents qui feront la différence dans votre organisation</p>
+            <a href="#recrutement" class="btn btn-outline-primary">En savoir plus</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13, 59, 102, 0.1);">
+              <i class="bi bi-mortarboard fs-3" style="color: var(--primary-blue);"></i>
+            </div>
+            <h4>Formation</h4>
+            <p class="mb-4">Développez les compétences de vos équipes avec nos programmes sur mesure</p>
+            <a href="#formation" class="btn btn-outline-primary">En savoir plus</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13, 59, 102, 0.1);">
+              <i class="bi bi-graph-up fs-3" style="color: var(--primary-blue);"></i>
+            </div>
+            <h4>Conseil RH</h4>
+            <p class="mb-4">Optimisez votre gestion des ressources humaines avec notre expertise</p>
+            <a href="#conseil" class="btn btn-outline-primary">En savoir plus</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13, 59, 102, 0.1);">
+              <i class="bi bi-briefcase fs-3" style="color: var(--primary-blue);"></i>
+            </div>
+            <h4>Externalisation</h4>
+            <p class="mb-4">Confiez-nous la gestion administrative de vos RH</p>
+            <a href="#externalisation" class="btn btn-outline-primary">En savoir plus</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13, 59, 102, 0.1);">
+              <i class="bi bi-person-badge fs-3" style="color: var(--primary-blue);"></i>
+            </div>
+            <h4>Coaching</h4>
+            <p class="mb-4">Accompagnement personnalisé pour vos managers et talents</p>
+            <a href="#coaching" class="btn btn-outline-primary">En savoir plus</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle mb-4 mx-auto" style="background-color: rgba(13, 59, 102, 0.1);">
+              <i class="bi bi-clipboard2-check fs-3" style="color: var(--primary-blue);"></i>
+            </div>
+            <h4>Audit RH</h4>
+            <p class="mb-4">Évaluez et améliorez vos processus RH</p>
+            <a href="#contact" class="btn btn-outline-primary">Nous contacter</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Recrutement Service -->
+<section id="recrutement" class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" 
+             alt="Service Recrutement" 
+             class="img-fluid rounded shadow">
+      </div>
+      <div class="col-lg-6">
+        <span class="badge bg-primary-blue text-white mb-3">Recrutement</span>
+        <h2 class="mb-4">Recrutement et sélection de talents</h2>
+        <p class="lead">Nous identifions les profils qui correspondent parfaitement à vos besoins et à votre culture d'entreprise.</p>
+        
+        <div class="mb-4">
+          <h5 class="d-flex align-items-center mb-3">
+            <i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i>
+            Notre approche
+          </h5>
+          <ul>
+            <li class="mb-2">Analyse approfondie de vos besoins</li>
+            <li class="mb-2">Sourcing multicanal (réseaux, bases de données, chasse directe)</li>
+            <li class="mb-2">Évaluation technique et comportementale rigoureuse</li>
+            <li>Présentation des meilleurs candidats sous 15 jours</li>
+          </ul>
+        </div>
+        
+        <div class="d-flex flex-wrap gap-3">
+          <a href="#contact" class="btn btn-primary px-4">
+            <i class="bi bi-telephone me-2"></i>Demander un devis
+          </a>
+          <a href="#" class="btn btn-outline-primary px-4">
+            <i class="bi bi-download me-2"></i>Télécharger notre brochure
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Formation Service -->
+<section id="formation" class="py-5 bg-light">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 order-lg-1 order-2">
+        <span class="badge bg-primary-blue text-white mb-3">Formation</span>
+        <h2 class="mb-4">Formation professionnelle sur mesure</h2>
+        <p class="lead">Des programmes adaptés pour développer les compétences de vos équipes et améliorer leur performance.</p>
+        
+        <div class="mb-4">
+          <h5 class="d-flex align-items-center mb-3">
+            <i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i>
+            Nos domaines de formation
+          </h5>
+          <div class="row">
+            <div class="col-md-6">
+              <ul>
+                <li class="mb-2">Management et leadership</li>
+                <li class="mb-2">Compétences techniques</li>
+                <li>Développement personnel</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul>
+                <li class="mb-2">Digital et transformation</li>
+                <li class="mb-2">Santé et sécurité au travail</li>
+                <li>Soft skills</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="alert alert-primary">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-info-circle-fill fs-4 me-3" style="color: var(--primary-blue);"></i>
+            <div>
+              <strong>OPCA & Financements :</strong> Nous vous accompagnons dans le montage de vos dossiers de financement.
+            </div>
+          </div>
+        </div>
+        
+        <a href="#contact" class="btn btn-primary px-4">
+          <i class="bi bi-journal-text me-2"></i>Demander un catalogue
+        </a>
+      </div>
+      <div class="col-lg-6 order-lg-2 order-1 mb-4 mb-lg-0">
+        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" 
+             alt="Service Formation" 
+             class="img-fluid rounded shadow">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Conseil Service -->
+<section id="conseil" class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+             alt="Service Conseil RH" 
+             class="img-fluid rounded shadow">
+      </div>
+      <div class="col-lg-6">
+        <span class="badge bg-primary-blue text-white mb-3">Conseil RH</span>
+        <h2 class="mb-4">Conseil stratégique en ressources humaines</h2>
+        <p class="lead">Nous vous accompagnons dans la structuration et l'optimisation de votre fonction RH.</p>
+        
+        <div class="mb-4">
+          <h5 class="d-flex align-items-center mb-3">
+            <i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i>
+            Nos interventions
+          </h5>
+          <ul>
+            <li class="mb-2">Diagnostic et audit RH</li>
+            <li class="mb-2">Définition de la politique RH</li>
+            <li class="mb-2">Mise en place de processus RH</li>
+            <li class="mb-2">GPEC (Gestion Prévisionnelle des Emplois et Compétences)</li>
+            <li>Accompagnement au changement</li>
+          </ul>
+        </div>
+        
+        <div class="card border-0 shadow-sm">
+          <div class="card-body bg-light">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-lightbulb fs-1 me-3" style="color: var(--accent-orange);"></i>
+              <div>
+                <h5 class="mb-1">Besoin d'un diagnostic RH ?</h5>
+                <p class="mb-0">Nous proposons une première analyse gratuite de vos besoins.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <a href="#contact" class="btn btn-primary px-4 me-3">
+            <i class="bi bi-calendar-check me-2"></i>Prendre rendez-vous
+          </a>
+          <a href="#" class="btn btn-outline-primary px-4">
+            <i class="bi bi-file-earmark-text me-2"></i>Voir nos études de cas
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Externalisation Service -->
+<section id="externalisation" class="py-5 bg-light">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 order-lg-1 order-2">
+        <span class="badge bg-primary-blue text-white mb-3">Externalisation</span>
+        <h2 class="mb-4">Externalisation des processus RH</h2>
+        <p class="lead">Confiez-nous la gestion administrative de vos ressources humaines et concentrez-vous sur votre cœur de métier.</p>
+        
+        <div class="mb-4">
+          <h5 class="d-flex align-items-center mb-3">
+            <i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i>
+            Nos prestations
+          </h5>
+          <div class="row">
+            <div class="col-md-6">
+              <ul>
+                <li class="mb-2">Paie et déclarations sociales</li>
+                <li class="mb-2">Gestion des contrats</li>
+                <li>Administration du personnel</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul>
+                <li class="mb-2">Gestion des temps et absences</li>
+                <li class="mb-2">Démarches administratives</li>
+                <li>Reporting RH</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="d-flex align-items-start bg-white p-3 rounded shadow-sm mb-4">
+          <i class="bi bi-graph-up-arrow fs-3 me-3" style="color: var(--primary-blue);"></i>
+          <div>
+            <h5 class="mb-1">Bénéfices pour votre entreprise</h5>
+            <p class="mb-0">Réduction des coûts, conformité légale garantie, accès à des experts RH.</p>
+          </div>
+        </div>
+        
+        <a href="#contact" class="btn btn-primary px-4">
+          <i class="bi bi-calculator me-2"></i>Simuler des économies
+        </a>
+      </div>
+      <div class="col-lg-6 order-lg-2 order-1 mb-4 mb-lg-0">
+        <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" 
+             alt="Service Externalisation" 
+             class="img-fluid rounded shadow">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Coaching Service -->
+<section id="coaching" class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" 
+             alt="Service Coaching" 
+             class="img-fluid rounded shadow">
+      </div>
+      <div class="col-lg-6">
+        <span class="badge bg-primary-blue text-white mb-3">Coaching</span>
+        <h2 class="mb-4">Coaching professionnel individuel et d'équipe</h2>
+        <p class="lead">Développez le potentiel de vos collaborateurs et optimisez la performance collective.</p>
+        
+        <div class="mb-4">
+          <h5 class="d-flex align-items-center mb-3">
+            <i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i>
+            Nos programmes
+          </h5>
+          <ul>
+            <li class="mb-2">Coaching de dirigeants</li>
+            <li class="mb-2">Accompagnement des managers</li>
+            <li class="mb-2">Préparation à des fonctions à responsabilités</li>
+            <li class="mb-2">Gestion de carrière</li>
+            <li>Team building et cohésion d'équipe</li>
+          </ul>
+        </div>
+        
+        <div class="alert alert-warning">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-star-fill fs-4 me-3" style="color: var(--accent-orange);"></i>
+            <div>
+              <strong>Approche sur mesure :</strong> Chaque coaching est adapté aux besoins spécifiques du bénéficiaire et de l'organisation.
+            </div>
+          </div>
+        </div>
+        
+        <div class="d-flex flex-wrap gap-3">
+          <a href="#contact" class="btn btn-primary px-4">
+            <i class="bi bi-person-lines-fill me-2"></i>Rencontrer un coach
+          </a>
+          <a href="#" class="btn btn-outline-primary px-4">
+            <i class="bi bi-play-circle me-2"></i>Voir témoignages
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section id="contact" class="py-5 bg-primary-blue ">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <h2 class="mb-3">Prêt à transformer votre gestion RH ?</h2>
+        <p class="lead mb-4">Nos experts sont à votre écoute pour analyser vos besoins et vous proposer des solutions adaptées.</p>
+        <div class="d-flex align-items-center mb-4">
+          <i class="bi bi-telephone fs-3 me-3"></i>
+          <div>
+            <h5 class="mb-0">Contactez-nous</h5>
+            <p class="mb-0">+223 XX XX XX XX</p>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-envelope fs-3 me-3"></i>
+          <div>
+            <h5 class="mb-0">Écrivez-nous</h5>
+            <p class="mb-0">contact@antares-rh.ml</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card shadow">
+          <div class="card-body p-4">
+            <h3 class="mb-4 text-center" style="color: var(--primary-blue);">Demandez un devis</h3>
+            <form>
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Votre nom">
+              </div>
+              <div class="mb-3">
+                <input type="email" class="form-control" placeholder="Votre email">
+              </div>
+              <div class="mb-3">
+                <input type="tel" class="form-control" placeholder="Votre téléphone">
+              </div>
+              <div class="mb-3">
+                <select class="form-select">
+                  <option selected>Service concerné</option>
+                  <option>Recrutement</option>
+                  <option>Formation</option>
+                  <option>Conseil RH</option>
+                  <option>Externalisation</option>
+                  <option>Coaching</option>
+                  <option>Audit RH</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <textarea class="form-control" rows="3" placeholder="Votre message"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Envoyer la demande</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto text-center mb-5">
+        <h2 class="mb-3" style="color: var(--primary-blue);">Questions fréquentes</h2>
+        <p>Trouvez des réponses aux questions les plus courantes sur nos services</p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item border-0 mb-3 shadow-sm">
+            <h3 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqOne">
+                Quels sont vos tarifs pour les services de recrutement ?
+              </button>
+            </h3>
+            <div id="faqOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Nos tarifs varient selon le type de poste à pourvoir et la complexité de la recherche. Nous proposons des forfaits adaptés à chaque besoin. Contactez-nous pour une étude personnalisée.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item border-0 mb-3 shadow-sm">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqTwo">
+                Proposez-vous des formations certifiantes ?
+              </button>
+            </h3>
+            <div id="faqTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Oui, plusieurs de nos formations délivrent des certifications reconnues par l'État ou par des organismes professionnels. Notre catalogue précise pour chaque formation les certifications obtenues.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item border-0 mb-3 shadow-sm">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqThree">
+                Quelle est la durée moyenne d'un processus de recrutement ?
+              </button>
+            </h3>
+            <div id="faqThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                En moyenne, nous présentons les premiers candidats qualifiés sous 15 jours ouvrables. Le processus complet jusqu'à l'embauche varie généralement entre 3 et 6 semaines selon la disponibilité des parties.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item border-0 shadow-sm">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqFour">
+                Travaillez-vous avec des entreprises de toutes tailles ?
+              </button>
+            </h3>
+            <div id="faqFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Absolument. Nous accompagnons aussi bien les TPE/PME que les grandes entreprises et institutions. Nos solutions sont modulables pour s'adapter à chaque structure.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-5">
+          <a href="#contact" class="btn btn-primary px-5">
+            <i class="bi bi-question-circle me-2"></i>Une autre question ?
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+    
+  
+  
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  
+  .accordion-button:not(.collapsed) {
+    background-color: rgba(13, 59, 102, 0.05);
+    color: var(--primary-blue);
+  }
+  
+  .accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,0.1);
+  }
+  
+  .services-hero {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+  }
+  
+  
+  /* Adaptation mobile */
+  @media (max-width: 767.98px) {
+    .services-hero {
+      min-height: 300px;
+      padding-top: 80px;
+      padding-bottom: 80px;
+    }
+    
+    .img-fluid {
+      max-height: 250px;
+      width: auto;
+      margin: 0 auto 20px;
+      display: block;
+    }
+    
+    /* Réorganisation des colonnes pour mobile */
+    .service-section .row {
+      flex-direction: column-reverse;
+    }
+  }
+  
+  .icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  
+  .accordion-button:not(.collapsed) {
+    background-color: rgba(13, 59, 102, 0.05);
+    color: var(--primary-blue);
+  }
+  
+  .accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,0.1);
+  }
+
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+{% endblock %}

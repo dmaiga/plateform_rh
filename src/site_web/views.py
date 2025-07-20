@@ -20,3 +20,6 @@ def contact(request):
 
 def login(request):
     return render(request, 'site_web/login.html')
+
+def entreprise_info(request):
+    return render(request, 'site_web/entreprise_info.html')

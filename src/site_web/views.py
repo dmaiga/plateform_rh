@@ -43,10 +43,13 @@ def candidat_register(request):
     if request.method == 'POST':
         # Traitement de l'inscription
         return redirect('login?type=candidate&from_registry=true')
-    return render(request, 'site_web/candidat_registry.html')
+    return render(request, 'site_web/candidate_registry.html')
 
 def savoir_plus(request):
     return render(request, 'site_web/savoir_plus.html')
 
 def recruteur_info(request):
     return render(request, 'site_web/recruteur_info.html')
+
+def rejoindre_team(request):
+    return render(request, 'site_web/rejoindre_team.html')

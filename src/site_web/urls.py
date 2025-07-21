@@ -13,4 +13,11 @@ urlpatterns = [
     path('candidat/inscription/', views.candidat_register, name='candidate-registry'),
     path('entreprise/en_savoir_plus', views.savoir_plus, name='savoir-plus'),
     path('recruteur_info/', views.recruteur_info, name='recruteur-info'),
+    path('rejoindre_team/', views.rejoindre_team, name='rejoindre-team'),
+
+
+
+
+
+
 ]

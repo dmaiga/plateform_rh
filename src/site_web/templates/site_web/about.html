@@ -365,7 +365,7 @@
         </div>
       </div>
       <div class="col-lg-6 order-lg-2 order-1 mb-4 mb-lg-0 d-none d-lg-block">
-        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+        <img src="{% static 'site_web/images/entreprise/organisation.jpg' %}" 
              alt="Organisation Antares" 
              class="img-fluid rounded shadow">
       </div>
@@ -476,10 +476,10 @@
     <h2 class="fw-bold mb-4">Prêt à transformer votre gestion RH ?</h2>
     <p class="lead mb-5">Notre équipe d'experts est à votre disposition pour analyser vos besoins</p>
     <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-      <a href="#contact.html" class="btn btn-light btn-lg px-4 px-md-5" style="color: #F46036;">
+      <a href="{% url 'contact' %}" class="btn btn-light btn-lg px-4 px-md-5" style="color: #F46036;">
         <i class="bi bi-chat-left-text me-2"></i>Nous contacter
       </a>
-      <a href="#rejoindre-equipe.html" class="btn btn-light btn-lg px-4 px-md-5" style="color: #0D3B66;">
+      <a href="{% url 'rejoindre-team' %}" class="btn btn-light btn-lg px-4 px-md-5" style="color: #0D3B66;">
         <i class="bi bi-person-plus me-2"></i>Rejoindre l'équipe
       </a>
     </div>

@@ -24,7 +24,7 @@
           <a href="{%url 'entreprise-info' %}" class="btn btn-primary btn-lg px-3" style="background-color: var(--accent-orange); border-color: var(--accent-orange);">
             <i class="bi bi-building me-2"></i>Espace Entreprise
           </a>
-          <a href="#candidat" class="btn btn-outline-primary btn-lg px-3" style="border-color: var(--primary-blue); color: var(--primary-blue);">
+          <a href="{%url 'candidate-registry' %}" class="btn btn-outline-primary btn-lg px-3" style="border-color: var(--primary-blue); color: var(--primary-blue);">
             <i class="bi bi-person-vcard me-2"></i>Espace Candidat
           </a>
         </div>
@@ -101,7 +101,7 @@
             <h3 class="h5" style="color: #0D3B66;">Responsable Logistique</h3>
             <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Bamako, Mali</p>
             <p class="small mb-3">CDI dans le secteur minier avec avantages compétitifs</p>
-            <a href="#" class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
+            <a href="{% url 'jobs' %}"  class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
           </div>
         </div>
       </div>
@@ -113,7 +113,7 @@
             <h3 class="h5" style="color: #0D3B66;">Développeur Fullstack</h3>
             <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Bamako, Mali</p>
             <p class="small mb-3">Contrat 12 mois renouvelable</p>
-            <a href="#" class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
+            <a href="{% url 'jobs' %}"  class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
           </div>
         </div>
       </div>
@@ -124,7 +124,7 @@
             <h3 class="h5" style="color: #0D3B66;">Expert Comptablee</h3>
             <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Bamako, Mali</p>
             <p class="small mb-3">Mission de 6 mois pour audit financier</p>
-            <a href="#" class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
+            <a href="{% url 'jobs' %}"   class="btn btn-sm" style="background-color: #F46036; color: white;">Postuler</a>
           </div>
         </div>
       </div>
@@ -270,7 +270,7 @@
   <div class="container text-center py-4">
     <h2 class="fw-bold">Prêt à transformer votre expérience RH ?</h2>
     <div class="d-flex justify-content-center gap-3">
-      <a href="#" class="btn btn-light btn-lg px-5" style="color: #F46036;">
+      <a href="{% url 'contact' %}" class="btn btn-light btn-lg px-5" style="color: #F46036;">
         <i class="bi bi-chat-left-text me-2"></i>Parler à un expert
       </a>
       <a href="{% url 'jobs' %}" class="btn btn-outline-light btn-lg px-5">

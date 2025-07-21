@@ -87,53 +87,133 @@ form input:focus {
   box-shadow: none;
   border-color: var(--accent-orange);
 }
-
+/* Style personnalisé pour le dropdown Espaces */
+  .dropdown-menu {
+    min-width: 280px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  .dropdown-item {
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+  }
+  
+  .dropdown-item:hover {
+    background-color: rgba(13, 59, 102, 0.05);
+  }
+  
+  .dropdown-item .text-muted {
+    font-size: 0.8em;
+  }
+  
+  @media (max-width: 991.98px) {
+    .dropdown-menu {
+      border: none;
+      box-shadow: none;
+    }
+    
+    .nav-item.dropdown {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+  }
   </style>
 </head>
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-    <div class="container">
-      <a class="navbar-brand"  href="{% url 'home' %}">Antares RH</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">Accueil</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link"  href="{% url 'about' %}">À propos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link"  href="{% url 'services' %}">Nos services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'jobs' %}">Offres d'emploi</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'contact' %}">Contact</a>
-          </li>
-          <li class="nav-item ms-lg-3">
-            <a class="nav-link btn btn-orange" href="{% url 'login' %}">Se connecter</a>
-          </li>
-        </ul>
-      </div>
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">Antares RH</a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}">Accueil</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'about' %}">À propos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'services' %}">Nos services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'jobs' %}">Offres d'emploi</a>
+        </li>
+<li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarEspaces" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Espaces
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarEspaces">
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'candidate-registry' %}">
+                <i class="bi bi-person-vcard me-2 text-primary-blue"></i>
+                <div>
+                  <div class="fw-bold">Candidat</div>
+                  <small class="text-muted">Postuler aux offres</small>
+                </div>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'entreprise-registry' %}">
+                <i class="bi bi-building me-2 text-primary-blue"></i>
+                <div>
+                  <div class="fw-bold">Entreprise</div>
+                  <small class="text-muted">Gestion RH complète</small>
+                </div>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'recruteur-info' %}">
+                <i class="bi bi-person-badge me-2 text-primary-blue"></i>
+                <div>
+                  <div class="fw-bold">Recruteur</div>
+                  <small class="text-muted">Publier des offres</small>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+        </li>
+        <li class="nav-item ms-lg-3 dropdown">
+    <a class="nav-link btn btn-orange dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Se connecter
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="{% url 'login' %}?type=candidate">
+            <i class="bi bi-person-vcard me-2"></i> Candidat
+        </a></li><li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{% url 'login' %}?type=company">
+            <i class="bi bi-building me-2"></i>Entreprise
+        </a></li><li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{% url 'login' %}?type=employee">
+            <i class="bi bi-person-badge me-2"></i>Salarié
+        </a></li>
+        
+        
+    </ul>
+</li>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
   <!-- Content -->
   <main class="flex-shrink-0">
     {% block content %}{% endblock %}
   </main>
-
-  <footer class="bg-primary-blue text-white py-5">
+<footer class="bg-primary-blue text-white py-5">
   <div class="container">
     <div class="row g-4">
 
       <!-- Logo + Description -->
-      <div class="col-lg-4 col-md-6">
+      <div class="col-lg-3 col-md-6">
         <div class="d-flex flex-column h-100">
           <a href="#" class="mb-3">
             <img src="{% static 'site_web/images/hero/logo_antares.png' %}" 
@@ -175,20 +255,56 @@ form input:focus {
         </ul>
       </div>
 
+      <!-- Espaces -->
+      <div class="col-lg-2 col-md-6">
+        <h5 class="h6 text-uppercase mb-3 border-bottom pb-2" style="border-color: rgba(255,255,255,0.1) !important;">Espaces</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <a href="{% url 'login' %}?type=candidate" class="text-white text-decoration-none d-flex align-items-center link-hover">
+              <i class="bi bi-person-vcard me-2" style="color: var(--accent-orange);"></i>Candidat
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="{% url 'login' %}?type=company" class="text-white text-decoration-none d-flex align-items-center link-hover">
+              <i class="bi bi-building me-2" style="color: var(--accent-orange);"></i>Entreprise
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'recruteur-info' %}" class="text-white text-decoration-none d-flex align-items-center link-hover">
+              <i class="bi bi-person-badge me-2" style="color: var(--accent-orange);"></i>Recruteur 
+            </a>
+          </li>
+        </ul>
+        
+        <h5 class="h6 text-uppercase mt-4 mb-3 border-bottom pb-2" style="border-color: rgba(255,255,255,0.1) !important;">Inscription</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <a href="{% url 'candidate-registry' %}" class="text-white text-decoration-none d-flex align-items-center link-hover">
+              <i class="bi bi-person-plus me-2" style="color: var(--accent-orange);"></i>Candidat
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'entreprise-registry' %}" class="text-white text-decoration-none d-flex align-items-center link-hover">
+              <i class="bi bi-building-add me-2" style="color: var(--accent-orange);"></i>Entreprise
+            </a>
+          </li>
+        </ul>
+      </div>
+
       <!-- Services -->
-      <div class="col-lg-3 col-md-6">
+      <div class="col-lg-2 col-md-6">
         <h5 class="h6 text-uppercase mb-3 border-bottom pb-2" style="border-color: rgba(255,255,255,0.1) !important;">Nos services</h5>
         <ul class="list-unstyled">
-          <li class="mb-2"><a href="#" class="text-white text-decoration-none d-flex align-items-center link-hover">
+          <li class="mb-2"><a href="{%url 'savoir-plus'%}" class="text-white text-decoration-none d-flex align-items-center link-hover">
             <i class="bi bi-check-circle me-2" style="color: var(--accent-orange);"></i>Recrutement
           </a></li>
-          <li class="mb-2"><a href="#" class="text-white text-decoration-none d-flex align-items-center link-hover">
+          <li class="mb-2"><a href="{%url 'savoir-plus'%}" class="text-white text-decoration-none d-flex align-items-center link-hover">
             <i class="bi bi-check-circle me-2" style="color: var(--accent-orange);"></i>Formation
           </a></li>
-          <li class="mb-2"><a href="#" class="text-white text-decoration-none d-flex align-items-center link-hover">
+          <li class="mb-2"><a href="{%url 'savoir-plus'%}" class="text-white text-decoration-none d-flex align-items-center link-hover">
             <i class="bi bi-check-circle me-2" style="color: var(--accent-orange);"></i>Gestion RH
           </a></li>
-          <li><a href="#" class="text-white text-decoration-none d-flex align-items-center link-hover">
+          <li><a href="{%url 'savoir-plus'%}" class="text-white text-decoration-none d-flex align-items-center link-hover">
             <i class="bi bi-check-circle me-2" style="color: var(--accent-orange);"></i>Conseil stratégique
           </a></li>
         </ul>
@@ -210,9 +326,6 @@ form input:focus {
           </a>
           <a href="https://www.linkedin.com/company/antares-rh-mali/" class="social-icon">
             <i class="bi bi-linkedin"></i>
-          </a>
-          <a href="#" class="social-icon">
-            <i class="bi bi-twitter-x"></i>
           </a>
           <a href="#" class="social-icon">
             <i class="bi bi-instagram"></i>

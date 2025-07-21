@@ -14,11 +14,11 @@
         <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
           <!-- CTA 1 -->
           <a href="#contact-entreprise" class="btn btn-orange btn-lg px-4">
-            <i class="bi bi-envelope me-2"></i>Audit gratuit
+            <i class="bi bi-envelope me-2"></i>Demander un Audit 
           </a>
           
           <!-- CTA 2 -->
-          <a href="#" class="btn btn-light btn-lg px-4" style="color: var(--primary-blue);">
+          <a href="{%url 'entreprise-registry' %}" class="btn btn-light btn-lg px-4" style="color: var(--primary-blue);">
             <i class="bi bi-lightning-fill me-2"></i>Nous rejoindre
           </a>
           
@@ -142,12 +142,10 @@
             <li class="mb-3"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Accéder à des rapports analytiques</li>
           </ul>
           <div class="d-flex flex-wrap gap-3">
-            <a href="#" class="btn btn-orange btn-lg px-4">
-              <i class="bi bi-building me-2"></i>Créer un compte entreprise
+            <a href="{%url 'entreprise-registry' %}" class="btn btn-orange btn-lg px-4">
+              <i class="bi bi-building me-3"></i>Créer un compte entreprise
             </a>
-            <a href="#" class="btn btn-outline-primary btn-lg px-4">
-              <i class="bi bi-play-circle me-2"></i>Voir la démo
-            </a>
+           
           </div>
         </div>
       </div>
@@ -155,93 +153,122 @@
   </div>
 </section>
 <!-- Section Solutions -->
+<!-- Section Solutions -->
 <section class="py-5" id="solutions">
   <div class="container">
     <h2 class="text-center fw-bold mb-5" style="color: var(--primary-blue);">Nos solutions pour les entreprises</h2>
     
     <div class="row g-4">
-      <!-- Solution 1 -->
+      <!-- Solution 1 - Recrutement -->
       <div class="col-lg-6">
-        <div class="card solution-card h-100 border-0 overflow-hidden">
-          <div class="row g-0">
+        <div class="card solution-card h-100 border-0 overflow-hidden shadow-sm">
+          <div class="row g-0 h-100">
             <div class="col-md-5">
-              <img src="{% static 'site_web/images/services/recrutement.jpg' %}" class="img-fluid h-100" alt="Recrutement" style="object-fit: cover;">
+              <div class="image-container h-100">
+                <img src="{% static 'site_web/images/entreprise/recrutement.jpg' %}" 
+                     class="img-fluid h-100 w-100" 
+                     alt="Recrutement permanent"
+                     style="object-fit: cover; min-height: 250px;">
+              </div>
             </div>
             <div class="col-md-7 bg-white">
-              <div class="card-body p-4">
+              <div class="card-body p-4 d-flex flex-column h-100">
                 <h3 class="h4" style="color: var(--primary-blue);">Recrutement permanent</h3>
-                <ul class="list-unstyled">
+                <ul class="list-unstyled mb-4">
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Chasse de tête sur mesure</li>
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Pré-sélection rigoureuse</li>
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Tests de compétences</li>
                 </ul>
-                <a href="#" class="btn btn-outline-primary btn-sm">En savoir plus</a>
+                <div class="mt-auto">
+                  <a href="{% url 'savoir-plus' %}" class="btn btn-outline-primary">En savoir plus</a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- Solution 2 -->
+      <!-- Solution 2 - Intérim -->
       <div class="col-lg-6">
-        <div class="card solution-card h-100 border-0 overflow-hidden">
-          <div class="row g-0">
+        <div class="card solution-card h-100 border-0 overflow-hidden shadow-sm">
+          <div class="row g-0 h-100">
             <div class="col-md-5">
-              <img src="{% static 'site_web/images/services/interim.jpg' %}" class="img-fluid h-100" alt="Intérim" style="object-fit: cover;">
+              <div class="image-container h-100">
+                <img src="{% static 'site_web/images/entreprise/interim.jpg' %}" 
+                     class="img-fluid h-100 w-100" 
+                     alt="Personnel intérimaire"
+                     style="object-fit: cover; min-height: 250px;">
+              </div>
             </div>
             <div class="col-md-7 bg-white">
-              <div class="card-body p-4">
+              <div class="card-body p-4 d-flex flex-column h-100">
                 <h3 class="h4" style="color: var(--primary-blue);">Personnel intérimaire</h3>
-                <ul class="list-unstyled">
+                <ul class="list-unstyled mb-4">
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Réactivité (24h max)</li>
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Large panel de métiers</li>
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Gestion administrative complète</li>
                 </ul>
-                <a href="#" class="btn btn-outline-primary btn-sm">En savoir plus</a>
+                <div class="mt-auto">
+                  <a href="{% url 'savoir-plus' %}" class="btn btn-outline-primary">En savoir plus</a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- Solution 3 -->
+      <!-- Solution 3 - Externalisation -->
       <div class="col-lg-6">
-        <div class="card solution-card h-100 border-0 overflow-hidden">
-          <div class="row g-0">
+        <div class="card solution-card h-100 border-0 overflow-hidden shadow-sm">
+          <div class="row g-0 h-100">
             <div class="col-md-5">
-              <img src="{% static 'site_web/images/services/outsourcing.jpg' %}" class="img-fluid h-100" alt="Externalisation" style="object-fit: cover;">
+              <div class="image-container h-100">
+                <img src="{% static 'site_web/images/entreprise/externalisation.jpg' %}" 
+                     class="img-fluid h-100 w-100" 
+                     alt="Externalisation RH"
+                     style="object-fit: cover; min-height: 250px;">
+              </div>
             </div>
             <div class="col-md-7 bg-white">
-              <div class="card-body p-4">
+              <div class="card-body p-4 d-flex flex-column h-100">
                 <h3 class="h4" style="color: var(--primary-blue);">Externalisation RH</h3>
-                <ul class="list-unstyled">
+                <ul class="list-unstyled mb-4">
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Paie et déclarations sociales</li>
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Gestion des contrats</li>
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Administration du personnel</li>
                 </ul>
-                <a href="#" class="btn btn-outline-primary btn-sm">En savoir plus</a>
+                <div class="mt-auto">
+                  <a href="{% url 'savoir-plus' %}" class="btn btn-outline-primary">En savoir plus</a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- Solution 4 -->
+      <!-- Solution 4 - Audit -->
       <div class="col-lg-6">
-        <div class="card solution-card h-100 border-0 overflow-hidden">
-          <div class="row g-0">
+        <div class="card solution-card h-100 border-0 overflow-hidden shadow-sm">
+          <div class="row g-0 h-100">
             <div class="col-md-5">
-              <img src="{% static 'site_web/images/services/audit.jpg' %}" class="img-fluid h-100" alt="Audit" style="object-fit: cover;">
+              <div class="image-container h-100">
+                <img src="{% static 'site_web/images/entreprise/audit.jpg' %}" 
+                     class="img-fluid h-100 w-100" 
+                     alt="Audit social"
+                     style="object-fit: cover; min-height: 250px;">
+              </div>
             </div>
             <div class="col-md-7 bg-white">
-              <div class="card-body p-4">
+              <div class="card-body p-4 d-flex flex-column h-100">
                 <h3 class="h4" style="color: var(--primary-blue);">Audit social</h3>
-                <ul class="list-unstyled">
+                <ul class="list-unstyled mb-4">
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Diagnostic organisationnel</li>
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Analyse des compétences</li>
                   <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-orange);"></i> Plan d'action personnalisé</li>
                 </ul>
-                <a href="#" class="btn btn-outline-primary btn-sm">En savoir plus</a>
+                <div class="mt-auto">
+                  <a href="{% url 'savoir-plus' %}" class="btn btn-outline-primary">En savoir plus</a>
+                </div>
               </div>
             </div>
           </div>
@@ -424,7 +451,9 @@
     </div>
   </div>
 </section>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
 <style>
   /* Styles spécifiques à la page entreprise */
   .hero-entreprise {
@@ -488,22 +517,26 @@
   .step-content {
     padding-top: 15px;
   }
+    .solution-card {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  .solution-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+  }
+  
+  .image-container {
+    overflow: hidden;
+  }
   
   .step-content h3 {
     color: var(--primary-blue);
     margin-bottom: 10px;
   }
   
-  .solution-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 8px !important;
-  }
-  
-  .solution-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-  }
-  
+ 
   /* Styles pour la nouvelle section plateforme */
   .dashboard-img {
     border: 1px solid rgba(0,0,0,0.1);
@@ -515,6 +548,18 @@
   }
   
   @media (max-width: 768px) {
+    .solution-card .row {
+      flex-direction: column;
+      height: auto;
+    }
+    
+    .solution-card .col-md-5 {
+      height: 200px;
+    }
+    
+    .solution-card .col-md-7 {
+      height: auto;
+    }
     .process-steps::before {
       display: none;
     }
@@ -529,15 +574,6 @@
       margin-bottom: 15px;
     }
     
-    .solution-card .row {
-      flex-direction: column;
-    }
-    
-    .solution-card .col-md-5 {
-      height: 200px;
-    }
-    
-    /* Responsive pour le nouveau CTA */
     .cta-buttons {
       flex-direction: column;
     }
@@ -547,6 +583,15 @@
       margin-bottom: 10px;
     }
   }
+  .solution-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+
 </style>
+
 
 {% endblock %}

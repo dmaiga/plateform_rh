@@ -91,11 +91,8 @@ WSGI_APPLICATION = 'antares_rh.wsgi.application'
 import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL')
-    )
+    'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
-
 
 
 # Password validation

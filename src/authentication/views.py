@@ -376,6 +376,7 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
+
 def login_page(request):
     form = forms.LoginForm()
     message = ''
@@ -395,7 +396,7 @@ def login_page(request):
             else:
                 message = 'Identifiants invalides.'
     return render(
-        request, 'authentication/login.html', context={'form': form, 'message': message})
+        request, 'site_web/login.html', context={'form': form, 'message': message})
 
 @login_required
 @user_passes_test(is_rh_or_admin)
